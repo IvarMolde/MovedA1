@@ -12,7 +12,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(session({
- app.use(session({
   secret: process.env.SESSION_SECRET || "norsk-a1-portal-secret",
   resave: false,
   saveUninitialized: false,
@@ -29,7 +28,6 @@ function requireAuth(req, res, next) {
   res.redirect("/login");
 }
 
-// ── DATA ─────────────────────────────────────────────
 // ── DATA ─────────────────────────────────────────────
 let kapitler = [];
 try {
@@ -181,7 +179,7 @@ VIKTIGE REGLER:
 
 KAPITTELKONTEKST:
 Kapittel ${kap.id}: ${kap.tittel}
-${leksjonsTekst}
+${leksjonTekst}
 Kommunikative mål: ${kap.funksjoner.join(", ")}
 Grammatikk i kapittelet: ${kap.grammatikk.join(", ")}
 Nøkkelord: ${kap.ordliste.join(", ")}${yrkeTekst}
@@ -207,7 +205,6 @@ async function genererPPTX({ kap, tittel, innhold, grammatikk, oppgaver }) {
     light: "E8EDF2", goldLight: "E8C050"
   };
 
-  // Les logoer
   const assetsDir = path.join(__dirname, "public/assets");
   const logoMoved = fs.readFileSync(path.join(assetsDir, "logo_moved.png")).toString("base64");
   const logoKommune = fs.readFileSync(path.join(assetsDir, "logo_kommune.png")).toString("base64");
@@ -253,12 +250,12 @@ async function genererPPTX({ kap, tittel, innhold, grammatikk, oppgaver }) {
   s2.addText(malItems, { x: 0.8, y: 1.3, w: 8.5, h: 3.2, valign: "top", margin: 8 });
   addFooter(s2);
 
-  // SLIDE 3: INNHOLD (fra Gemini)
+  // SLIDE 3: INNHOLD
   const s3 = pres.addSlide();
   s3.background = { color: C.white };
   s3.addShape("rect", { x: 0, y: 0, w: 10, h: 1.05, fill: { color: C.navy }, line: { color: C.navy } });
   s3.addShape("rect", { x: 0, y: 0, w: 0.22, h: 1.05, fill: { color: C.gold }, line: { color: C.gold } });
-  s3.addText("📖 " + (kap.tittel), { x: 0.45, y: 0.05, w: 7.5, h: 0.95, fontSize: 20, color: C.white, fontFace: "Trebuchet MS", bold: true, align: "left", valign: "middle", margin: 0 });
+  s3.addText("📖 " + kap.tittel, { x: 0.45, y: 0.05, w: 7.5, h: 0.95, fontSize: 20, color: C.white, fontFace: "Trebuchet MS", bold: true, align: "left", valign: "middle", margin: 0 });
   s3.addImage({ data: logoMovedData, x: 8.2, y: 0.25, w: 1.55, h: 0.44, altText: "MOVED" });
   if (innhold) {
     const linjer = innhold.split("\n").filter(l => l.trim()).slice(0, 6);
@@ -276,12 +273,10 @@ async function genererPPTX({ kap, tittel, innhold, grammatikk, oppgaver }) {
     s4.addText("📚 Grammatikk", { x: 0.45, y: 0.05, w: 3.0, h: 0.95, fontSize: 12, color: C.goldLight, fontFace: "Calibri", bold: true, align: "left", valign: "middle", charSpacing: 1, margin: 0 });
     s4.addText(kap.grammatikk[0] || "Grammatikk", { x: 3.3, y: 0.05, w: 5.0, h: 0.95, fontSize: 18, color: C.white, fontFace: "Trebuchet MS", bold: true, align: "center", valign: "middle", margin: 0 });
     s4.addImage({ data: logoMovedData, x: 8.2, y: 0.25, w: 1.55, h: 0.44, altText: "MOVED" });
-    // Regel-kort
     s4.addShape("rect", { x: 0.3, y: 1.25, w: 4.5, h: 2.8, fill: { color: C.white }, line: { color: C.light, pt: 1.5 }, shadow: { type: "outer", blur: 8, offset: 3, angle: 135, color: "000000", opacity: 0.12 } });
     s4.addShape("rect", { x: 0.3, y: 1.25, w: 0.18, h: 2.8, fill: { color: C.navy }, line: { color: C.navy } });
     s4.addText("Regel", { x: 0.6, y: 1.35, w: 4.0, h: 0.4, fontSize: 13, color: C.navy, fontFace: "Trebuchet MS", bold: true, margin: 0 });
     s4.addText(grammatikk || `${kap.grammatikk[0]}:\n\nI norske setninger er verbet alltid på andre plass.\nDette kalles V2-regelen.`, { x: 0.6, y: 1.8, w: 3.95, h: 2.1, fontSize: 13, color: C.text, fontFace: "Calibri", valign: "top", margin: 4, wrap: true });
-    // Eksempel-kort
     s4.addShape("rect", { x: 5.2, y: 1.25, w: 4.5, h: 2.8, fill: { color: C.navy }, line: { color: C.navy }, shadow: { type: "outer", blur: 8, offset: 3, angle: 135, color: "000000", opacity: 0.12 } });
     s4.addShape("rect", { x: 5.2, y: 1.25, w: 0.18, h: 2.8, fill: { color: C.gold }, line: { color: C.gold } });
     s4.addText("Eksempler", { x: 5.5, y: 1.35, w: 3.9, h: 0.4, fontSize: 13, color: C.goldLight, fontFace: "Trebuchet MS", bold: true, margin: 0 });
@@ -300,12 +295,12 @@ async function genererPPTX({ kap, tittel, innhold, grammatikk, oppgaver }) {
   s5.addShape("rect", { x: 8.6, y: 0.0, w: 1.4, h: 1.05, fill: { color: C.gold }, line: { color: C.gold } });
   s5.addText("A1", { x: 8.6, y: 0.0, w: 1.4, h: 1.05, fontSize: 28, color: C.white, fontFace: "Trebuchet MS", bold: true, align: "center", valign: "middle", margin: 0 });
   const oppgaveListe = oppgaver || [
-    `Hva heter du? Snakk med makkeren din.`,
-    `Sett inn riktig verb: Jeg ___ norsk. (snakke)`,
-    `Skriv tre setninger om deg selv.`,
-    `Fyll inn: Hun ___ fra Polen. (komme)`,
-    `Sorter ordene: bor / jeg / Oslo / i`,
-    `Riktig eller feil? «Han heter Oslo.»`
+    "Hva heter du? Snakk med makkeren din.",
+    "Sett inn riktig verb: Jeg ___ norsk. (snakke)",
+    "Skriv tre setninger om deg selv.",
+    "Fyll inn: Hun ___ fra Polen. (komme)",
+    "Sorter ordene: bor / jeg / Oslo / i",
+    "Riktig eller feil? «Han heter Oslo.»"
   ];
   const colW = 4.4, rowH = 1.05, gap = 0.2;
   oppgaveListe.slice(0, 6).forEach((opp, i) => {
@@ -319,7 +314,6 @@ async function genererPPTX({ kap, tittel, innhold, grammatikk, oppgaver }) {
   });
   addFooter(s5);
 
-  // Returner som Buffer
   const buf = await pres.write({ outputType: "nodebuffer" });
   return buf;
 }
