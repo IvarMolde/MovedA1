@@ -1,6 +1,5 @@
 require("dotenv").config();
 const express = require("express");
-const session = require("express-session");
 const path = require("path");
 const fs = require("fs");
 
@@ -11,20 +10,12 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
-app.use(session({
-  secret: process.env.SESSION_SECRET || "norsk-a1-portal-secret",
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    secure: false,
-    sameSite: "lax",
-    maxAge: 8 * 60 * 60 * 1000
-  }
-}));
 
 // ── AUTH MIDDLEWARE ───────────────────────────────────
+// Cookie-basert auth – fungerer på Vercel serverless
 function requireAuth(req, res, next) {
-  if (req.session && req.session.loggedIn) return next();
+  const cookie = req.headers.cookie || "";
+  if (cookie.includes("auth=ok")) return next();
   res.redirect("/login");
 }
 
@@ -44,15 +35,15 @@ try {
 
 // ── ROUTES: AUTH ──────────────────────────────────────
 app.get("/login", (req, res) => {
-  if (req.session?.loggedIn) return res.redirect("/");
+  const cookie = req.headers.cookie || "";
+  if (cookie.includes("auth=ok")) return res.redirect("/");
   res.sendFile(path.join(__dirname, "public/login.html"));
 });
 
 app.post("/login", (req, res) => {
   const { passord } = req.body;
   if (passord === process.env.APP_PASSORD) {
-    req.session.loggedIn = true;
-    req.session.loginTime = Date.now();
+    res.setHeader("Set-Cookie", "auth=ok; Path=/; HttpOnly; Max-Age=28800; SameSite=Lax");
     res.redirect("/");
   } else {
     res.redirect("/login?feil=1");
@@ -60,7 +51,7 @@ app.post("/login", (req, res) => {
 });
 
 app.get("/logg-ut", (req, res) => {
-  req.session.destroy();
+  res.setHeader("Set-Cookie", "auth=ok; Path=/; HttpOnly; Max-Age=0; SameSite=Lax");
   res.redirect("/login");
 });
 
@@ -106,7 +97,6 @@ app.post("/api/generer", requireAuth, async (req, res) => {
 
     const prompt = byggPrompt({ kap, leksjon, type, yrke, nivaa });
 
-    // Streaming-respons
     res.setHeader("Content-Type", "text/plain; charset=utf-8");
     res.setHeader("Transfer-Encoding", "chunked");
     res.setHeader("X-Accel-Buffering", "no");
@@ -213,7 +203,6 @@ async function genererPPTX({ kap, tittel, innhold, grammatikk, oppgaver }) {
   const logoMovedData = `image/png;base64,${logoMoved}`;
   const logoKommuneData = `image/png;base64,${logoKommune}`;
   const fjordData = `image/png;base64,${fjordBanner}`;
-
   const kapNavn = `Kapittel ${kap.id} – ${kap.tittel}`;
 
   function addFooter(slide) {
@@ -224,7 +213,6 @@ async function genererPPTX({ kap, tittel, innhold, grammatikk, oppgaver }) {
     slide.addText(kapNavn, { x: 3.5, y: 4.78, w: 3, h: 0.3, fontSize: 9, color: C.muted, fontFace: "Calibri", align: "center", margin: 0 });
   }
 
-  // SLIDE 1: FORSIDE
   const s1 = pres.addSlide();
   s1.background = { color: C.white };
   s1.addShape("rect", { x: 0, y: 0, w: 3.8, h: 5.625, fill: { color: C.navy }, line: { color: C.navy } });
@@ -238,7 +226,6 @@ async function genererPPTX({ kap, tittel, innhold, grammatikk, oppgaver }) {
   s1.addText(`CEFR ${kap.id <= 6 ? "A1" : kap.id <= 10 ? "A1–A2" : "A2"}  ·  ${kap.funksjoner[0]}`, { x: 4.1, y: 3.5, w: 5.5, h: 0.5, fontSize: 13, color: C.muted, fontFace: "Calibri", italic: true, align: "left", margin: 0 });
   s1.addImage({ data: logoKommuneData, x: 7.8, y: 5.1, w: 1.9, h: 0.62, altText: "Molde Kommune" });
 
-  // SLIDE 2: LÆRINGSMÅL
   const s2 = pres.addSlide();
   s2.background = { color: C.white };
   s2.addShape("rect", { x: 0, y: 0, w: 10, h: 1.05, fill: { color: C.navy }, line: { color: C.navy } });
@@ -250,7 +237,6 @@ async function genererPPTX({ kap, tittel, innhold, grammatikk, oppgaver }) {
   s2.addText(malItems, { x: 0.8, y: 1.3, w: 8.5, h: 3.2, valign: "top", margin: 8 });
   addFooter(s2);
 
-  // SLIDE 3: INNHOLD
   const s3 = pres.addSlide();
   s3.background = { color: C.white };
   s3.addShape("rect", { x: 0, y: 0, w: 10, h: 1.05, fill: { color: C.navy }, line: { color: C.navy } });
@@ -264,7 +250,6 @@ async function genererPPTX({ kap, tittel, innhold, grammatikk, oppgaver }) {
   }
   addFooter(s3);
 
-  // SLIDE 4: GRAMMATIKK
   if (kap.grammatikk.length > 0) {
     const s4 = pres.addSlide();
     s4.background = { color: C.white };
@@ -285,7 +270,6 @@ async function genererPPTX({ kap, tittel, innhold, grammatikk, oppgaver }) {
     addFooter(s4);
   }
 
-  // SLIDE 5: OPPGAVER
   const s5 = pres.addSlide();
   s5.background = { color: C.offwhite };
   s5.addShape("rect", { x: 0, y: 0, w: 10, h: 1.05, fill: { color: C.navy }, line: { color: C.navy } });
