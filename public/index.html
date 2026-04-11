@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MOVED – Norsk A1-portal</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy: #1B3A5C; --navy2: #2A5480; --gold: #C9960C; --gold2: #E8C050;
+    --white: #FFFFFF; --cream: #F7F4EE; --text: #1A1A2E; --muted: #6B7B8D;
+    --border: #D8DDE3; --success: #2E9E6B;
+    --shadow: 0 4px 20px rgba(27,58,92,0.10);
+    --shadow-lg: 0 12px 40px rgba(27,58,92,0.16);
+    --radius: 16px;
+  }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); min-height: 100vh; }
+
+  /* ── TOPPMENY ── */
+  .topbar {
+    background: var(--navy);
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.2);
+  }
+  .topbar-inner {
+    max-width: 1200px; margin: 0 auto;
+    padding: 0 24px;
+    display: flex; align-items: center; gap: 16px; height: 64px;
+  }
+  .topbar-logo img { height: 36px; width: auto; }
+  .topbar-title {
+    font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700;
+    color: rgba(255,255,255,0.85); letter-spacing: -0.01em;
+  }
+  .topbar-nav {
+    margin-left: auto; display: flex; align-items: center; gap: 4px;
+  }
+  .nav-link {
+    color: rgba(255,255,255,0.75); text-decoration: none; padding: 8px 14px;
+    border-radius: 8px; font-size: 0.88rem; font-weight: 500;
+    transition: all 0.18s;
+  }
+  .nav-link:hover { background: rgba(255,255,255,0.12); color: white; }
+  .nav-link.active { background: rgba(255,255,255,0.15); color: white; }
+  .logout-btn {
+    color: rgba(255,255,255,0.6); text-decoration: none; padding: 8px 14px;
+    border: 1px solid rgba(255,255,255,0.2); border-radius: 8px;
+    font-size: 0.85rem; font-weight: 500; transition: all 0.18s; margin-left: 8px;
+  }
+  .logout-btn:hover { background: rgba(255,255,255,0.1); color: white; }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy2) 100%);
+    padding: 52px 24px 44px;
+    position: relative; overflow: hidden;
+  }
+  .hero::after {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0; height: 4px;
+    background: linear-gradient(90deg, var(--gold), var(--gold2), var(--gold));
+  }
+  /* Dekorative sirkler */
+  .hero-circle1 { position: absolute; top: -60px; right: -60px; width: 280px; height: 280px; border-radius: 50%; background: rgba(255,255,255,0.04); pointer-events: none; }
+  .hero-circle2 { position: absolute; bottom: -40px; left: 30%; width: 160px; height: 160px; border-radius: 50%; background: rgba(201,150,12,0.1); pointer-events: none; }
+  .hero-inner { max-width: 1200px; margin: 0 auto; position: relative; z-index: 1; }
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(201,150,12,0.2); border: 1px solid rgba(201,150,12,0.4);
+    color: var(--gold2); padding: 5px 14px; border-radius: 20px;
+    font-size: 0.8rem; font-weight: 600; letter-spacing: 0.06em;
+    text-transform: uppercase; margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-family: 'Syne', sans-serif; font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 800; color: white; letter-spacing: -0.03em;
+    line-height: 1.15; margin-bottom: 12px;
+  }
+  .hero h1 span { color: var(--gold2); }
+  .hero-sub { font-size: 1rem; color: rgba(255,255,255,0.75); max-width: 520px; line-height: 1.65; margin-bottom: 28px; }
+  .hero-stats { display: flex; gap: 32px; flex-wrap: wrap; }
+  .stat { display: flex; flex-direction: column; gap: 2px; }
+  .stat-num { font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 800; color: white; }
+  .stat-label { font-size: 0.8rem; color: rgba(255,255,255,0.6); font-weight: 500; }
+
+  /* ── FJORD-BANNER ── */
+  .fjord-wrap { background: var(--navy); overflow: hidden; height: 48px; }
+  .fjord-wrap img { width: 100%; height: 48px; object-fit: cover; opacity: 0.35; }
+
+  /* ── MAIN ── */
+  .main { max-width: 1200px; margin: 0 auto; padding: 40px 24px 80px; }
+
+  /* ── SEKSJON-HEADER ── */
+  .section-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 28px; flex-wrap: wrap; gap: 12px;
+  }
+  .section-title {
+    font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 800;
+    color: var(--navy); letter-spacing: -0.02em;
+  }
+  .section-title span { color: var(--gold); }
+  .filter-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+  .chip {
+    padding: 6px 16px; border-radius: 20px; font-size: 0.82rem; font-weight: 600;
+    cursor: pointer; border: 1.5px solid var(--border); background: white;
+    color: var(--muted); transition: all 0.18s;
+  }
+  .chip:hover { border-color: var(--navy); color: var(--navy); }
+  .chip.active { background: var(--navy); color: white; border-color: var(--navy); }
+
+  /* ── KAPITTELGRID ── */
+  .kapittel-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+  }
+
+  /* ── KAPITTELKORT ── */
+  .kapittel-kort {
+    background: white; border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden; cursor: pointer;
+    transition: transform 0.22s, box-shadow 0.22s;
+    text-decoration: none; color: inherit;
+    display: flex; flex-direction: column;
+    border: 1.5px solid transparent;
+  }
+  .kapittel-kort:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--border);
+  }
+  .kort-topp {
+    padding: 20px 20px 16px;
+    display: flex; align-items: flex-start; gap: 14px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+  .kort-ikon {
+    width: 48px; height: 48px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem; flex-shrink: 0;
+  }
+  .kort-num {
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; margin-bottom: 4px;
+  }
+  .kort-tittel {
+    font-family: 'Syne', sans-serif; font-size: 1.05rem; font-weight: 700;
+    letter-spacing: -0.02em; line-height: 1.25;
+  }
+  .kort-yrke {
+    position: absolute; top: 16px; right: 16px;
+    font-size: 0.72rem; font-weight: 600;
+    background: var(--cream); color: var(--muted);
+    padding: 3px 10px; border-radius: 12px;
+  }
+  .kort-bunn { padding: 14px 20px 18px; flex: 1; }
+  .kort-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+  .mini-chip {
+    font-size: 0.72rem; font-weight: 500;
+    background: var(--cream); color: var(--navy);
+    padding: 3px 10px; border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+  .kort-gram { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+  .kort-gram strong { color: var(--navy); }
+  .kort-footer {
+    padding: 10px 20px; background: var(--cream);
+    display: flex; align-items: center; justify-content: space-between;
+    border-top: 1px solid var(--border);
+  }
+  .kort-footer-text { font-size: 0.78rem; color: var(--muted); font-weight: 500; }
+  .kort-pil {
+    width: 28px; height: 28px; border-radius: 8px;
+    background: var(--navy); color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem; transition: background 0.18s;
+  }
+  .kapittel-kort:hover .kort-pil { background: var(--gold); }
+
+  /* ── FOOTER ── */
+  .site-footer {
+    background: var(--navy);
+    padding: 28px 24px;
+    margin-top: auto;
+  }
+  .footer-inner {
+    max-width: 1200px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 16px;
+  }
+  .footer-inner img { height: 32px; width: auto; }
+  .footer-text { font-size: 0.82rem; color: rgba(255,255,255,0.5); }
+
+  /* ── LOADING ── */
+  .loading {
+    display: flex; align-items: center; justify-content: center;
+    min-height: 300px; flex-direction: column; gap: 16px;
+  }
+  .spinner {
+    width: 40px; height: 40px; border: 3px solid var(--border);
+    border-top-color: var(--navy); border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  @media (max-width: 640px) {
+    .hero { padding: 36px 16px 32px; }
+    .hero-stats { gap: 20px; }
+    .main { padding: 28px 16px 60px; }
+    .topbar-title { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOPPMENY -->
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="topbar-logo" href="/">
+      <img src="/assets/logo_moved.png" alt="MOVED">
+    </a>
+    <span class="topbar-title">Norsk A1-portal</span>
+    <nav class="topbar-nav">
+      <a href="/" class="nav-link active">📚 Kapitler</a>
+      <a href="/grammatikk" class="nav-link">📖 Grammatikk</a>
+      <a href="/logg-ut" class="logout-btn">Logg ut</a>
+    </nav>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-circle1"></div>
+  <div class="hero-circle2"></div>
+  <div class="hero-inner">
+    <div class="hero-tag">🇳🇴 God i norsk · CEFR A1</div>
+    <h1>Lag <span>undervisningsmateriell</span><br>på sekunder</h1>
+    <p class="hero-sub">
+      Velg et kapittel og generer arbeidsark, PowerPoint-presentasjoner
+      og digitale oppgaver – tilpasset dine elever ved Molde voksenopplæring.
+    </p>
+    <div class="hero-stats">
+      <div class="stat"><span class="stat-num">15</span><span class="stat-label">Kapitler</span></div>
+      <div class="stat"><span class="stat-num">75</span><span class="stat-label">Leksjoner</span></div>
+      <div class="stat"><span class="stat-num">8</span><span class="stat-label">Oppgavetyper</span></div>
+      <div class="stat"><span class="stat-num">A1</span><span class="stat-label">CEFR-nivå</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- FJORD-DEKOR -->
+<div class="fjord-wrap">
+  <img src="/assets/fjord_banner.png" alt="">
+</div>
+
+<!-- INNHOLD -->
+<main class="main">
+  <div class="section-header">
+    <h2 class="section-title">Alle kapitler <span>·</span> God i norsk</h2>
+    <div class="filter-chips">
+      <button class="chip active" onclick="filtrer('alle', this)">Alle</button>
+      <button class="chip" onclick="filtrer('A1', this)">A1-fokus</button>
+      <button class="chip" onclick="filtrer('grammatikk', this)">Grammatikk</button>
+      <button class="chip" onclick="filtrer('yrke', this)">Yrkestekst</button>
+    </div>
+  </div>
+
+  <div class="kapittel-grid" id="grid">
+    <div class="loading"><div class="spinner"></div><span style="color:var(--muted);font-size:0.9rem;">Laster kapitler...</span></div>
+  </div>
+</main>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <img src="/assets/logo_moved.png" alt="MOVED">
+    <span class="footer-text">Molde voksenopplæringssenter · MBO-kurs · God i norsk A1</span>
+    <img src="/assets/logo_kommune.png" alt="Molde Kommune" style="filter:brightness(5);opacity:0.5;">
+  </div>
+</footer>
+
+<script>
+let alleKapitler = [];
+
+async function lastKapitler() {
+  try {
+    const r = await fetch('/api/kapitler');
+    alleKapitler = await r.json();
+    visKapitler(alleKapitler);
+  } catch (e) {
+    document.getElementById('grid').innerHTML = '<p style="color:var(--error);padding:20px;">Kunne ikke laste kapitler. Prøv å laste siden på nytt.</p>';
+  }
+}
+
+function visKapitler(kap) {
+  const grid = document.getElementById('grid');
+  if (!kap.length) { grid.innerHTML = '<p style="color:var(--muted);padding:20px;">Ingen kapitler funnet.</p>'; return; }
+
+  grid.innerHTML = kap.map(k => `
+    <a class="kapittel-kort" href="/kapittel/${k.id}" aria-label="Åpne kapittel ${k.id}: ${k.tittel}">
+      <div class="kort-topp">
+        <div class="kort-ikon" style="background:#${k.farge}22; color:#${k.farge};">${k.ikon}</div>
+        <div>
+          <div class="kort-num" style="color:#${k.farge};">Kapittel ${k.id}</div>
+          <div class="kort-tittel">${k.tittel}</div>
+        </div>
+        <div class="kort-yrke">👔 ${k.yrke}</div>
+      </div>
+      <div class="kort-bunn">
+        <div class="kort-chips">
+          ${k.funksjoner.slice(0, 3).map(f => `<span class="mini-chip">${f}</span>`).join('')}
+          ${k.funksjoner.length > 3 ? `<span class="mini-chip">+${k.funksjoner.length - 3}</span>` : ''}
+        </div>
+        <div class="kort-gram">
+          <strong>Grammatikk:</strong> ${k.grammatikk.slice(0, 2).join(' · ')}${k.grammatikk.length > 2 ? '...' : ''}
+        </div>
+      </div>
+      <div class="kort-footer">
+        <span class="kort-footer-text">${k.leksjoner.length} leksjoner</span>
+        <div class="kort-pil">→</div>
+      </div>
+    </a>
+  `).join('');
+}
+
+function filtrer(type, btn) {
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  if (type === 'alle') return visKapitler(alleKapitler);
+  if (type === 'A1') return visKapitler(alleKapitler.filter(k => k.id <= 6));
+  if (type === 'grammatikk') return visKapitler(alleKapitler.filter(k => k.grammatikk.length > 2));
+  if (type === 'yrke') return visKapitler(alleKapitler.filter(k => k.yrke));
+}
+
+lastKapitler();
+</script>
+</body>
+</html>

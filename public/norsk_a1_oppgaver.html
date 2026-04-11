@@ -1,0 +1,1593 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Norsk A1 – Digitale oppgaver</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1B3A5C;
+    --blue: #2563A8;
+    --sky: #4A9FD5;
+    --mint: #3BBFA3;
+    --orange: #E8650A;
+    --amber: #F5A623;
+    --cream: #F7F4EE;
+    --white: #FFFFFF;
+    --text: #1A1A2E;
+    --muted: #6B7B8D;
+    --success: #2E9E6B;
+    --error: #D94040;
+    --border: #D8DDE3;
+    --shadow: 0 4px 24px rgba(27,58,92,0.10);
+    --shadow-lg: 0 12px 48px rgba(27,58,92,0.16);
+    --radius: 16px;
+    --radius-sm: 10px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    font-size: 17px;
+    line-height: 1.65;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .site-header {
+    background: var(--navy);
+    color: white;
+    padding: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.25);
+  }
+  .header-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    height: 64px;
+  }
+  .header-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.3rem;
+    letter-spacing: -0.02em;
+    color: white;
+    text-decoration: none;
+  }
+  .header-logo span { color: var(--sky); }
+  .header-badge {
+    background: var(--sky);
+    color: white;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-left: auto;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 60%, var(--sky) 100%);
+    color: white;
+    padding: 56px 24px 48px;
+    text-align: center;
+  }
+  .hero-kap {
+    display: inline-block;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: white;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 5px 16px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-bottom: 12px;
+  }
+  .hero-sub {
+    font-size: 1.05rem;
+    opacity: 0.85;
+    max-width: 520px;
+    margin: 0 auto 28px;
+  }
+  .hero-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+  }
+  .chip {
+    background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.25);
+    color: white;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+
+  /* ── NAV TABS ── */
+  .tab-nav {
+    background: white;
+    border-bottom: 2px solid var(--border);
+    overflow-x: auto;
+    scrollbar-width: none;
+    position: sticky;
+    top: 64px;
+    z-index: 90;
+  }
+  .tab-nav::-webkit-scrollbar { display: none; }
+  .tab-list {
+    display: flex;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 16px;
+    gap: 0;
+    list-style: none;
+  }
+  .tab-btn {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 16px 18px 14px;
+    border: none;
+    background: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    white-space: nowrap;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .tab-btn .tab-icon { font-size: 1.1rem; }
+  .tab-btn:hover { color: var(--blue); }
+  .tab-btn.active {
+    color: var(--blue);
+    border-bottom-color: var(--blue);
+    font-weight: 600;
+  }
+
+  /* ── MAIN LAYOUT ── */
+  .main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+  .exercise-section { display: none; }
+  .exercise-section.active { display: block; }
+
+  /* ── EXERCISE CARD ── */
+  .ex-card {
+    background: white;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    margin-bottom: 32px;
+  }
+  .ex-card-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 22px 28px;
+    border-bottom: 1px solid var(--border);
+  }
+  .ex-type-badge {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+  }
+  .ex-card-header h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+  .ex-card-header p {
+    font-size: 0.88rem;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .ex-card-body { padding: 28px; }
+
+  /* ── BUTTONS ── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.18s;
+    text-decoration: none;
+  }
+  .btn-primary {
+    background: var(--blue);
+    color: white;
+  }
+  .btn-primary:hover { background: var(--navy); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(37,99,168,0.35); }
+  .btn-secondary {
+    background: var(--cream);
+    color: var(--navy);
+    border: 1.5px solid var(--border);
+  }
+  .btn-secondary:hover { background: #eee; }
+  .btn-sm { padding: 8px 16px; font-size: 0.85rem; }
+  .btn-group { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
+
+  /* ── FEEDBACK ── */
+  .feedback {
+    display: none;
+    padding: 14px 18px;
+    border-radius: var(--radius-sm);
+    font-weight: 500;
+    font-size: 0.95rem;
+    margin-top: 16px;
+    animation: fadeIn 0.25s ease;
+  }
+  .feedback.show { display: flex; align-items: center; gap: 10px; }
+  .feedback.correct { background: #E8F7F1; color: var(--success); border: 1.5px solid #A8DECE; }
+  .feedback.wrong { background: #FDEAEA; color: var(--error); border: 1.5px solid #F5B0B0; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ── PROGRESS BAR ── */
+  .progress-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .progress-bar {
+    flex: 1;
+    height: 8px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--sky), var(--mint));
+    border-radius: 4px;
+    transition: width 0.4s ease;
+  }
+  .progress-text { font-size: 0.85rem; font-weight: 600; color: var(--muted); white-space: nowrap; }
+
+  /* ════════════════════════════════════════
+     OPPGAVETYPE 1 – FLERVALG
+  ════════════════════════════════════════ */
+  .mc-question {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 20px;
+    line-height: 1.5;
+    color: var(--navy);
+    padding: 16px 20px;
+    background: var(--cream);
+    border-radius: var(--radius-sm);
+    border-left: 4px solid var(--sky);
+  }
+  .mc-options { display: grid; gap: 10px; }
+  .mc-option {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.18s;
+    font-size: 0.97rem;
+    background: white;
+  }
+  .mc-option:hover { border-color: var(--sky); background: #F0F8FF; }
+  .mc-option.selected { border-color: var(--blue); background: #EEF4FF; }
+  .mc-option.correct-ans { border-color: var(--success); background: #E8F7F1; }
+  .mc-option.wrong-ans { border-color: var(--error); background: #FDEAEA; }
+  .mc-letter {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: var(--cream);
+    border: 1.5px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+    transition: all 0.18s;
+  }
+  .mc-option.selected .mc-letter { background: var(--blue); color: white; border-color: var(--blue); }
+  .mc-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 20px;
+    gap: 12px;
+  }
+
+  /* ════════════════════════════════════════
+     OPPGAVETYPE 2 – FYLL INN
+  ════════════════════════════════════════ */
+  .fill-sentence {
+    font-size: 1.05rem;
+    line-height: 2.2;
+    margin-bottom: 24px;
+  }
+  .fill-input {
+    display: inline-block;
+    border: none;
+    border-bottom: 2.5px solid var(--navy);
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1.02rem;
+    padding: 2px 8px;
+    min-width: 100px;
+    text-align: center;
+    outline: none;
+    transition: border-color 0.2s;
+    color: var(--blue);
+    font-weight: 600;
+  }
+  .fill-input:focus { border-color: var(--sky); }
+  .fill-input.correct { border-color: var(--success); color: var(--success); }
+  .fill-input.wrong { border-color: var(--error); color: var(--error); }
+  .fill-hint {
+    font-size: 0.82rem;
+    color: var(--muted);
+    font-style: italic;
+    margin-left: 6px;
+  }
+  .fill-item {
+    padding: 16px 20px;
+    background: var(--cream);
+    border-radius: var(--radius-sm);
+    margin-bottom: 12px;
+    border-left: 3px solid var(--border);
+    transition: border-color 0.2s;
+  }
+  .fill-item:focus-within { border-left-color: var(--sky); }
+
+  /* ════════════════════════════════════════
+     OPPGAVETYPE 3 – DRA OG SLIPP SETNING
+  ════════════════════════════════════════ */
+  .drag-zone {
+    min-height: 56px;
+    background: #F0F7FF;
+    border: 2.5px dashed var(--sky);
+    border-radius: var(--radius-sm);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px 14px;
+    margin-bottom: 16px;
+    transition: background 0.2s, border-color 0.2s;
+    align-items: center;
+  }
+  .drag-zone.over { background: #E0F0FF; border-color: var(--blue); }
+  .drag-zone-label {
+    font-size: 0.8rem;
+    color: var(--muted);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .word-bank {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 16px;
+    background: var(--cream);
+    border-radius: var(--radius-sm);
+    min-height: 60px;
+    margin-bottom: 16px;
+  }
+  .drag-word {
+    padding: 8px 16px;
+    background: white;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    cursor: grab;
+    font-size: 0.95rem;
+    font-weight: 500;
+    user-select: none;
+    transition: all 0.18s;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  }
+  .drag-word:hover { border-color: var(--sky); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+  .drag-word.dragging { opacity: 0.4; cursor: grabbing; }
+  .drag-word.placed { background: var(--navy); color: white; border-color: var(--navy); }
+  .drag-sentence-group { margin-bottom: 28px; }
+  .drag-sentence-num {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--muted);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* ════════════════════════════════════════
+     OPPGAVETYPE 4 – SANT / USANT
+  ════════════════════════════════════════ */
+  .text-passage {
+    background: linear-gradient(135deg, #F0F7FF, #F7F4EE);
+    border-radius: var(--radius-sm);
+    padding: 20px 24px;
+    margin-bottom: 24px;
+    font-size: 0.97rem;
+    line-height: 1.8;
+    border-left: 4px solid var(--sky);
+    position: relative;
+  }
+  .text-passage::before {
+    content: '📖';
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    font-size: 1.5rem;
+    opacity: 0.4;
+  }
+  .tf-items { display: grid; gap: 12px; }
+  .tf-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 18px;
+    background: white;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    flex-wrap: wrap;
+  }
+  .tf-statement { flex: 1; font-size: 0.97rem; min-width: 200px; }
+  .tf-buttons { display: flex; gap: 8px; }
+  .tf-btn {
+    padding: 7px 20px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    background: white;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.18s;
+    letter-spacing: 0.03em;
+  }
+  .tf-btn.sant:hover { border-color: var(--success); color: var(--success); }
+  .tf-btn.usant:hover { border-color: var(--error); color: var(--error); }
+  .tf-btn.selected-sant { background: var(--success); color: white; border-color: var(--success); }
+  .tf-btn.selected-usant { background: var(--error); color: white; border-color: var(--error); }
+  .tf-btn.reveal-correct { background: #E8F7F1; color: var(--success); border-color: var(--success); }
+  .tf-btn.reveal-wrong { background: #FDEAEA; color: var(--error); border-color: var(--error); }
+  .tf-icon { font-size: 1.2rem; margin-left: 8px; }
+
+  /* ════════════════════════════════════════
+     OPPGAVETYPE 5 – KOBLE PAR (MEMORY)
+  ════════════════════════════════════════ */
+  .match-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .match-col { display: flex; flex-direction: column; gap: 8px; }
+  .match-col-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 4px;
+    padding-left: 4px;
+  }
+  .match-item {
+    padding: 12px 16px;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.18s;
+    font-size: 0.95rem;
+    font-weight: 500;
+    background: white;
+    text-align: center;
+  }
+  .match-item:hover { border-color: var(--sky); background: #F0F8FF; }
+  .match-item.selected { border-color: var(--orange); background: #FFF5EE; box-shadow: 0 0 0 3px rgba(232,101,10,0.15); }
+  .match-item.matched { border-color: var(--success); background: #E8F7F1; color: var(--success); cursor: default; }
+  .match-item.wrong-flash { animation: wrongFlash 0.5s ease; }
+  @keyframes wrongFlash {
+    0%,100% { border-color: var(--border); background: white; }
+    50% { border-color: var(--error); background: #FDEAEA; }
+  }
+  .match-score {
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--navy);
+    padding: 10px;
+    background: var(--cream);
+    border-radius: var(--radius-sm);
+    margin-bottom: 16px;
+  }
+
+  /* ════════════════════════════════════════
+     OPPGAVETYPE 6 – FLASHKORT
+  ════════════════════════════════════════ */
+  .flashcard-scene {
+    perspective: 1200px;
+    max-width: 480px;
+    margin: 0 auto 24px;
+    cursor: pointer;
+  }
+  .flashcard {
+    width: 100%;
+    aspect-ratio: 3/2;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.55s cubic-bezier(0.4, 0.0, 0.2, 1);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+  }
+  .flashcard.flipped { transform: rotateY(180deg); }
+  .flashcard-face {
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 28px;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+  .flashcard-front {
+    background: linear-gradient(135deg, var(--navy), var(--blue));
+    color: white;
+  }
+  .flashcard-back {
+    background: linear-gradient(135deg, var(--mint), #1A8A70);
+    color: white;
+    transform: rotateY(180deg);
+  }
+  .card-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0.7;
+    margin-bottom: 12px;
+  }
+  .card-word {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.6rem, 5vw, 2.4rem);
+    font-weight: 800;
+    text-align: center;
+    line-height: 1.2;
+  }
+  .card-sub {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    margin-top: 8px;
+    text-align: center;
+  }
+  .card-flip-hint {
+    font-size: 0.78rem;
+    opacity: 0.6;
+    margin-top: 16px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .flashcard-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 8px;
+  }
+  .fc-counter {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--muted);
+    min-width: 60px;
+    text-align: center;
+  }
+
+  /* ════════════════════════════════════════
+     OPPGAVETYPE 7 – SORTER SETNING
+  ════════════════════════════════════════ */
+  .sort-drop {
+    min-height: 54px;
+    background: white;
+    border: 2.5px dashed var(--navy);
+    border-radius: var(--radius-sm);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 8px 12px;
+    margin-bottom: 8px;
+    align-items: center;
+    transition: all 0.2s;
+  }
+  .sort-drop.has-words { border-style: solid; border-color: var(--border); }
+  .sort-word {
+    padding: 9px 15px;
+    background: var(--navy);
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.93rem;
+    font-weight: 500;
+    transition: all 0.18s;
+    user-select: none;
+  }
+  .sort-word:hover { background: var(--blue); transform: scale(1.03); }
+  .sort-bank {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 14px;
+    background: var(--cream);
+    border-radius: var(--radius-sm);
+    margin-bottom: 12px;
+    min-height: 52px;
+  }
+  .sort-word.bank { background: white; color: var(--navy); border: 2px solid var(--border); }
+  .sort-word.bank:hover { border-color: var(--navy); background: #F0F4F8; }
+  .sort-task { margin-bottom: 28px; }
+  .sort-task-num {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--sky);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 6px;
+  }
+  .sort-check-result {
+    display: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 8px;
+    margin-top: 8px;
+  }
+  .sort-check-result.show { display: block; }
+  .sort-check-result.ok { background: #E8F7F1; color: var(--success); }
+  .sort-check-result.nope { background: #FDEAEA; color: var(--error); }
+
+  /* ════════════════════════════════════════
+     OPPGAVETYPE 8 – DIKTAT / SKRIV ETTER
+  ════════════════════════════════════════ */
+  .diktat-item {
+    margin-bottom: 24px;
+    padding: 20px;
+    background: white;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    transition: border-color 0.2s;
+  }
+  .diktat-item:focus-within { border-color: var(--sky); }
+  .diktat-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  .play-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: var(--navy);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+  .play-btn:hover { background: var(--blue); transform: translateY(-1px); }
+  .play-btn.playing { background: var(--orange); }
+  .diktat-num {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .diktat-textarea {
+    width: 100%;
+    min-height: 70px;
+    padding: 12px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.2s;
+    color: var(--text);
+    background: var(--cream);
+  }
+  .diktat-textarea:focus { border-color: var(--sky); background: white; }
+  .diktat-answer {
+    display: none;
+    margin-top: 12px;
+    padding: 12px 16px;
+    background: #E8F7F1;
+    border-radius: 10px;
+    font-size: 0.92rem;
+    border-left: 3px solid var(--success);
+  }
+  .diktat-answer.show { display: block; }
+  .diktat-answer strong { color: var(--success); }
+
+  /* ── SCORE SUMMARY ── */
+  .score-card {
+    background: linear-gradient(135deg, var(--navy), var(--blue));
+    color: white;
+    border-radius: var(--radius);
+    padding: 32px;
+    text-align: center;
+    margin-top: 24px;
+    display: none;
+    animation: fadeIn 0.4s ease;
+  }
+  .score-card.show { display: block; }
+  .score-big {
+    font-family: 'Syne', sans-serif;
+    font-size: 4rem;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .score-label { font-size: 1rem; opacity: 0.85; margin-bottom: 20px; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 640px) {
+    .match-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .ex-card-body { padding: 20px 16px; }
+    .hero { padding: 40px 16px 36px; }
+    .tab-btn { padding: 12px 12px 10px; font-size: 0.82rem; }
+    .tab-btn .tab-icon { display: none; }
+  }
+
+  /* ── UTILITIES ── */
+  .hidden { display: none !important; }
+  .text-center { text-align: center; }
+  .mt-16 { margin-top: 16px; }
+  .mt-24 { margin-top: 24px; }
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header class="site-header" role="banner">
+  <div class="header-inner">
+    <a href="#" class="header-logo">Norsk<span>A1</span></a>
+    <span class="header-badge">Digitale oppgaver</span>
+  </div>
+</header>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-kap">Kapittel 1 – Vi blir kjent</div>
+  <h1>Øv på norsk!</h1>
+  <p class="hero-sub">8 ulike oppgavetyper. Velg hva du vil øve på.</p>
+  <div class="hero-chips">
+    <span class="chip">🎯 Flervalg</span>
+    <span class="chip">✏️ Fyll inn</span>
+    <span class="chip">🔀 Ordstilling</span>
+    <span class="chip">📖 Sant/usant</span>
+    <span class="chip">🔗 Koble par</span>
+    <span class="chip">🃏 Flashkort</span>
+    <span class="chip">🎵 Sorter setning</span>
+    <span class="chip">🎤 Diktat</span>
+  </div>
+</section>
+
+<!-- ── TAB NAV ── -->
+<nav class="tab-nav" aria-label="Oppgavetyper">
+  <ul class="tab-list" role="tablist">
+    <li><button class="tab-btn active" role="tab" aria-selected="true" onclick="switchTab('mc', this)"><span class="tab-icon">🎯</span> Flervalg</button></li>
+    <li><button class="tab-btn" role="tab" onclick="switchTab('fill', this)"><span class="tab-icon">✏️</span> Fyll inn</button></li>
+    <li><button class="tab-btn" role="tab" onclick="switchTab('drag', this)"><span class="tab-icon">🔀</span> Ordstilling</button></li>
+    <li><button class="tab-btn" role="tab" onclick="switchTab('tf', this)"><span class="tab-icon">📖</span> Sant/usant</button></li>
+    <li><button class="tab-btn" role="tab" onclick="switchTab('match', this)"><span class="tab-icon">🔗</span> Koble par</button></li>
+    <li><button class="tab-btn" role="tab" onclick="switchTab('flash', this)"><span class="tab-icon">🃏</span> Flashkort</button></li>
+    <li><button class="tab-btn" role="tab" onclick="switchTab('sort', this)"><span class="tab-icon">🎵</span> Sorter ord</button></li>
+    <li><button class="tab-btn" role="tab" onclick="switchTab('diktat', this)"><span class="tab-icon">🎤</span> Diktat</button></li>
+  </ul>
+</nav>
+
+<!-- ── MAIN ── -->
+<main class="main" id="main-content">
+
+  <!-- ══════════════════════════════════════
+       SEKSJON 1 – FLERVALG
+  ══════════════════════════════════════ -->
+  <section class="exercise-section active" id="sec-mc">
+    <div class="ex-card">
+      <div class="ex-card-header">
+        <div class="ex-type-badge" style="background:#EEF4FF;">🎯</div>
+        <div>
+          <h2>Flervalg</h2>
+          <p>Velg riktig svar. Les spørsmålet godt.</p>
+        </div>
+      </div>
+      <div class="ex-card-body">
+        <div class="progress-wrap">
+          <div class="progress-bar"><div class="progress-fill" id="mc-progress" style="width:0%"></div></div>
+          <span class="progress-text" id="mc-progress-text">0 / 5</span>
+        </div>
+
+        <div id="mc-container"></div>
+
+        <div class="score-card" id="mc-score">
+          <div class="score-big" id="mc-score-num">0/5</div>
+          <div class="score-label">Bra jobbet! 🎉</div>
+          <button class="btn btn-secondary" onclick="resetMC()" style="margin-top:16px;">Prøv igjen</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       SEKSJON 2 – FYLL INN
+  ══════════════════════════════════════ -->
+  <section class="exercise-section" id="sec-fill">
+    <div class="ex-card">
+      <div class="ex-card-header">
+        <div class="ex-type-badge" style="background:#FFF5EE;">✏️</div>
+        <div>
+          <h2>Fyll inn</h2>
+          <p>Skriv riktig ord i tomrommet. Hintet hjelper deg.</p>
+        </div>
+      </div>
+      <div class="ex-card-body">
+        <div id="fill-items"></div>
+        <div class="btn-group">
+          <button class="btn btn-primary" onclick="checkFill()">✓ Sjekk svarene</button>
+          <button class="btn btn-secondary" onclick="resetFill()">↺ Prøv igjen</button>
+        </div>
+        <div class="feedback" id="fill-feedback"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       SEKSJON 3 – ORDSTILLING (DRA)
+  ══════════════════════════════════════ -->
+  <section class="exercise-section" id="sec-drag">
+    <div class="ex-card">
+      <div class="ex-card-header">
+        <div class="ex-type-badge" style="background:#F0FBF8;">🔀</div>
+        <div>
+          <h2>Ordstilling</h2>
+          <p>Dra ordene inn i riktig rekkefølge. Husk V2-regelen!</p>
+        </div>
+      </div>
+      <div class="ex-card-body" id="drag-body"></div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       SEKSJON 4 – SANT / USANT
+  ══════════════════════════════════════ -->
+  <section class="exercise-section" id="sec-tf">
+    <div class="ex-card">
+      <div class="ex-card-header">
+        <div class="ex-type-badge" style="background:#FFFBEE;">📖</div>
+        <div>
+          <h2>Sant eller usant?</h2>
+          <p>Les teksten. Er setningene sanne eller usanne?</p>
+        </div>
+      </div>
+      <div class="ex-card-body">
+        <div class="text-passage">
+          <strong>Hei! Jeg heter Fatima.</strong> Jeg er fra Marokko. Jeg bor i Oslo. Jeg snakker arabisk og litt norsk. Jeg er 32 år. Jeg er gift og har to barn. Jeg jobber ikke nå, men jeg vil finne en jobb. Jeg liker å lage mat og å lese bøker.
+        </div>
+        <div class="tf-items" id="tf-items"></div>
+        <div class="btn-group">
+          <button class="btn btn-primary" onclick="checkTF()">✓ Sjekk svarene</button>
+          <button class="btn btn-secondary" onclick="resetTF()">↺ Prøv igjen</button>
+        </div>
+        <div class="feedback" id="tf-feedback"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       SEKSJON 5 – KOBLE PAR
+  ══════════════════════════════════════ -->
+  <section class="exercise-section" id="sec-match">
+    <div class="ex-card">
+      <div class="ex-card-header">
+        <div class="ex-type-badge" style="background:#FFF0F5;">🔗</div>
+        <div>
+          <h2>Koble par</h2>
+          <p>Klikk på et norsk ord, så på riktig oversettelse.</p>
+        </div>
+      </div>
+      <div class="ex-card-body">
+        <div class="match-score" id="match-score">Koblede par: 0 / 6</div>
+        <div class="match-grid" id="match-grid"></div>
+        <div class="btn-group">
+          <button class="btn btn-secondary" onclick="resetMatch()">↺ Bland på nytt</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       SEKSJON 6 – FLASHKORT
+  ══════════════════════════════════════ -->
+  <section class="exercise-section" id="sec-flash">
+    <div class="ex-card">
+      <div class="ex-card-header">
+        <div class="ex-type-badge" style="background:#F0FBF8;">🃏</div>
+        <div>
+          <h2>Flashkort</h2>
+          <p>Klikk på kortet for å se oversettelsen. Kan du svaret?</p>
+        </div>
+      </div>
+      <div class="ex-card-body">
+        <div class="flashcard-scene" onclick="flipCard()" role="button" tabindex="0" aria-label="Vend flashkortet" onkeydown="if(event.key==='Enter'||event.key===' ')flipCard()">
+          <div class="flashcard" id="flashcard">
+            <div class="flashcard-face flashcard-front">
+              <div class="card-label">🇳🇴 Norsk</div>
+              <div class="card-word" id="flash-front">hete</div>
+              <div class="card-sub" id="flash-context">(verb)</div>
+              <div class="card-flip-hint">🔄 Klikk for å snu</div>
+            </div>
+            <div class="flashcard-face flashcard-back">
+              <div class="card-label">💡 Oversettelse</div>
+              <div class="card-word" id="flash-back">to be called / heissen</div>
+              <div class="card-sub" id="flash-example">«Jeg heter Maria.»</div>
+              <div class="card-flip-hint">🔄 Klikk for neste</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flashcard-controls">
+          <button class="btn btn-secondary btn-sm" onclick="prevCard()">← Forrige</button>
+          <span class="fc-counter" id="fc-counter">1 / 8</span>
+          <button class="btn btn-primary btn-sm" onclick="nextCard()">Neste →</button>
+        </div>
+
+        <div style="margin-top:16px; background:var(--cream); border-radius:10px; padding:14px 18px;">
+          <div style="font-size:0.85rem; color:var(--muted); font-weight:600; margin-bottom:8px;">Kjente du ordet?</div>
+          <div style="display:flex; gap:8px;">
+            <button class="btn btn-sm" style="background:#E8F7F1;color:var(--success);border:1.5px solid #A8DECE;" onclick="markCard('yes')">✓ Ja, jeg kunne det</button>
+            <button class="btn btn-sm" style="background:#FDEAEA;color:var(--error);border:1.5px solid #F5B0B0;" onclick="markCard('no')">✗ Nei, øv mer</button>
+          </div>
+          <div style="margin-top:10px; font-size:0.85rem; color:var(--muted);" id="flash-stats">Kan: 0 &nbsp;|&nbsp; Øv mer: 0</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       SEKSJON 7 – SORTER ORD
+  ══════════════════════════════════════ -->
+  <section class="exercise-section" id="sec-sort">
+    <div class="ex-card">
+      <div class="ex-card-header">
+        <div class="ex-type-badge" style="background:#FFF5EE;">🎵</div>
+        <div>
+          <h2>Bygg setningen</h2>
+          <p>Klikk på ordene i riktig rekkefølge. Klikk et ord for å fjerne det.</p>
+        </div>
+      </div>
+      <div class="ex-card-body" id="sort-body"></div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       SEKSJON 8 – DIKTAT
+  ══════════════════════════════════════ -->
+  <section class="exercise-section" id="sec-diktat">
+    <div class="ex-card">
+      <div class="ex-card-header">
+        <div class="ex-type-badge" style="background:#EEF4FF;">🎤</div>
+        <div>
+          <h2>Diktat</h2>
+          <p>Trykk på lydknappen og skriv det du hører.</p>
+        </div>
+      </div>
+      <div class="ex-card-body" id="diktat-body"></div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+// ══════════════════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════════════════
+
+const mcData = [
+  {
+    q: "Hva heter hun?", context: "Hun er fra Polen.",
+    options: ["Han heter Eva.", "Hun heter Eva.", "Heter Eva hun.", "Eva er heter."],
+    correct: 1
+  },
+  {
+    q: "Hvor kommer Ahmed fra?", context: "Ahmed er fra Egypt.",
+    options: ["Ahmed kommer fra Egypt.", "Ahmed fra Egypt kommer.", "Fra Egypt Ahmed.", "Kommer Egypt Ahmed fra."],
+    correct: 0
+  },
+  {
+    q: "Velg riktig spørreord:", context: "_____ bor du? – Jeg bor i Bergen.",
+    options: ["Hva", "Hvem", "Hvor", "Når"],
+    correct: 2
+  },
+  {
+    q: "Velg riktig form:", context: "Jeg _____ norsk.",
+    options: ["snakk", "snakke", "snakker", "snakkes"],
+    correct: 2
+  },
+  {
+    q: "Hva er V2-regelen?", context: "I norske setninger...",
+    options: ["Verbet er alltid sist.", "Verbet er alltid på plass 2.", "Subjektet er alltid sist.", "Verbet er alltid først."],
+    correct: 1
+  }
+];
+
+const fillData = [
+  { before: "Jeg ", after: " Amara.", answer: "heter", hint: "(navn)" },
+  { before: "Hun ", after: " fra Somalia.", hint: "(verb: komme)", answer: "kommer" },
+  { before: "Vi ", after: " på norskkurs.", hint: "(verb: gå)", answer: "går" },
+  { before: "Han ", after: " ikke norsk.", hint: "(verb: snakke)", answer: "snakker" },
+  { before: "De ", after: " i Oslo.", hint: "(verb: bo)", answer: "bor" }
+];
+
+const dragData = [
+  { words: ["bor", "Jeg", "i", "Tromsø"], correct: ["Jeg", "bor", "i", "Tromsø"] },
+  { words: ["fra", "hun", "Kommer", "Kina?"], correct: ["Kommer", "hun", "fra", "Kina?"] },
+  { words: ["norsk", "litt", "snakker", "Han"], correct: ["Han", "snakker", "litt", "norsk"] }
+];
+
+const tfData = [
+  { stmt: "Fatima er fra Egypt.", correct: false },
+  { stmt: "Hun bor i Oslo.", correct: true },
+  { stmt: "Hun snakker bare norsk.", correct: false },
+  { stmt: "Hun er 32 år.", correct: true },
+  { stmt: "Hun har to barn.", correct: true },
+  { stmt: "Hun jobber på et kontor nå.", correct: false }
+];
+
+const matchPairs = [
+  { nor: "å hete", trans: "å kalles / heiße" },
+  { nor: "å komme fra", trans: "å stamme fra / come from" },
+  { nor: "å snakke", trans: "å tale / speak" },
+  { nor: "å bo", trans: "å leve et sted / live" },
+  { nor: "å forstå", trans: "å begripe / understand" },
+  { nor: "å lære", trans: "å tilegne seg / learn" }
+];
+
+const flashData = [
+  { front: "hete", ctx: "(verb, å hete)", back: "to be called / heißen", ex: "«Jeg heter Maria.»" },
+  { front: "komme fra", ctx: "(verb + prep.)", back: "to come from / kommen aus", ex: "«Jeg kommer fra Polen.»" },
+  { front: "bo", ctx: "(verb, å bo)", back: "to live / wohnen", ex: "«Jeg bor i Bergen.»" },
+  { front: "snakke", ctx: "(verb, å snakke)", back: "to speak / sprechen", ex: "«Jeg snakker norsk.»" },
+  { front: "forstå", ctx: "(verb, å forstå)", back: "to understand / verstehen", ex: "«Kan du gjenta?»" },
+  { front: "land", ctx: "(substantiv, et)", back: "country / das Land", ex: "«Hvilket land er du fra?»" },
+  { front: "språk", ctx: "(substantiv, et)", back: "language / die Sprache", ex: "«Norsk er et språk.»" },
+  { front: "norskkurs", ctx: "(substantiv, et)", back: "Norwegian course", ex: "«Jeg går på norskkurs.»" }
+];
+
+const sortData = [
+  { num: 1, words: ["hun", "fra", "Marokko", "er"], correct: "hun er fra Marokko" },
+  { num: 2, words: ["norsk", "Du", "godt", "snakker"], correct: "Du snakker godt norsk" },
+  { num: 3, words: ["til", "Jeg", "norsk", "lære", "vil"], correct: "Jeg vil lære norsk" },
+  { num: 4, words: ["heter", "barnet", "Hva", "?"], correct: "Hva heter barnet ?" }
+];
+
+const diktatData = [
+  { num: 1, text: "Jeg heter Maria og jeg kommer fra Polen.", display: "Setning 1" },
+  { num: 2, text: "Hun bor i Oslo og snakker litt norsk.", display: "Setning 2" },
+  { num: 3, text: "Hva heter du? Hvor kommer du fra?", display: "Setning 3" },
+  { num: 4, text: "Vi går på norskkurs i dag.", display: "Setning 4" }
+];
+
+// ══════════════════════════════════════════════════════
+// TAB NAVIGATION
+// ══════════════════════════════════════════════════════
+function switchTab(id, btn) {
+  document.querySelectorAll('.exercise-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
+  document.getElementById('sec-' + id).classList.add('active');
+  btn.classList.add('active');
+  btn.setAttribute('aria-selected','true');
+  window.scrollTo({ top: document.querySelector('.tab-nav').offsetTop - 10, behavior: 'smooth' });
+}
+
+// ══════════════════════════════════════════════════════
+// OPPGAVE 1 – FLERVALG
+// ══════════════════════════════════════════════════════
+let mcIndex = 0, mcScore = 0, mcAnswered = false;
+
+function renderMC() {
+  const q = mcData[mcIndex];
+  const pct = (mcIndex / mcData.length) * 100;
+  document.getElementById('mc-progress').style.width = pct + '%';
+  document.getElementById('mc-progress-text').textContent = mcIndex + ' / ' + mcData.length;
+
+  const html = `
+    <div class="mc-question">
+      <div style="font-size:0.82rem;color:var(--muted);font-weight:600;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:8px;">Spørsmål ${mcIndex + 1} av ${mcData.length}</div>
+      <div>${q.q}</div>
+      ${q.context ? `<div style="font-size:0.9rem;color:var(--muted);margin-top:6px;font-style:italic;">${q.context}</div>` : ''}
+    </div>
+    <div class="mc-options" id="mc-opts">
+      ${q.options.map((o,i) => `
+        <div class="mc-option" onclick="selectMC(${i})" role="button" tabindex="0" onkeydown="if(event.key==='Enter')selectMC(${i})">
+          <span class="mc-letter">${String.fromCharCode(65+i)}</span>
+          <span>${o}</span>
+        </div>`).join('')}
+    </div>
+    <div class="feedback" id="mc-fb"></div>
+    <div class="mc-nav">
+      <span style="font-size:0.88rem;color:var(--muted);">Poeng: ${mcScore}</span>
+      <button class="btn btn-primary" id="mc-next-btn" onclick="nextMC()" style="display:none;">Neste spørsmål →</button>
+    </div>`;
+  document.getElementById('mc-container').innerHTML = html;
+  mcAnswered = false;
+}
+
+function selectMC(i) {
+  if (mcAnswered) return;
+  mcAnswered = true;
+  const q = mcData[mcIndex];
+  const opts = document.querySelectorAll('.mc-option');
+  const fb = document.getElementById('mc-fb');
+  opts[i].classList.add(i === q.correct ? 'correct-ans' : 'wrong-ans');
+  if (i !== q.correct) opts[q.correct].classList.add('correct-ans');
+  if (i === q.correct) { mcScore++; showFeedback(fb, true, 'Riktig! 🎉'); }
+  else showFeedback(fb, false, 'Ikke riktig. Riktig svar er markert i grønt.');
+  const nb = document.getElementById('mc-next-btn');
+  nb.style.display = 'inline-flex';
+  nb.textContent = mcIndex < mcData.length - 1 ? 'Neste spørsmål →' : 'Se resultatet →';
+}
+
+function nextMC() {
+  mcIndex++;
+  if (mcIndex >= mcData.length) {
+    document.getElementById('mc-container').innerHTML = '';
+    document.getElementById('mc-progress').style.width = '100%';
+    document.getElementById('mc-progress-text').textContent = mcData.length + ' / ' + mcData.length;
+    const sc = document.getElementById('mc-score');
+    sc.classList.add('show');
+    document.getElementById('mc-score-num').textContent = mcScore + '/' + mcData.length;
+    const emoji = mcScore === mcData.length ? '🏆' : mcScore >= 3 ? '🎉' : '💪';
+    sc.querySelector('.score-label').textContent = emoji + ' ' + (mcScore === mcData.length ? 'Perfekt resultat!' : mcScore >= 3 ? 'Bra jobbet!' : 'Øv litt mer!');
+  } else { renderMC(); }
+}
+
+function resetMC() {
+  mcIndex = 0; mcScore = 0; mcAnswered = false;
+  document.getElementById('mc-score').classList.remove('show');
+  renderMC();
+}
+
+// ══════════════════════════════════════════════════════
+// OPPGAVE 2 – FYLL INN
+// ══════════════════════════════════════════════════════
+function buildFill() {
+  document.getElementById('fill-items').innerHTML = fillData.map((f, i) => `
+    <div class="fill-item" id="fill-item-${i}">
+      <div class="fill-sentence">
+        ${f.before}<input class="fill-input" id="fill-${i}" type="text" placeholder="___" aria-label="Fyll inn ord ${i+1}" autocomplete="off">${f.after}
+        <span class="fill-hint">${f.hint}</span>
+      </div>
+    </div>`).join('');
+}
+
+function checkFill() {
+  let correct = 0;
+  fillData.forEach((f, i) => {
+    const inp = document.getElementById('fill-' + i);
+    const val = inp.value.trim().toLowerCase();
+    if (val === f.answer.toLowerCase()) {
+      inp.classList.add('correct'); inp.classList.remove('wrong'); correct++;
+    } else {
+      inp.classList.add('wrong'); inp.classList.remove('correct');
+    }
+  });
+  const fb = document.getElementById('fill-feedback');
+  showFeedback(fb, correct === fillData.length,
+    correct === fillData.length
+      ? `Perfekt! Alle ${fillData.length} svar er riktige! 🎉`
+      : `${correct} av ${fillData.length} riktige. Se de røde feltene.`);
+}
+
+function resetFill() {
+  fillData.forEach((_, i) => {
+    const inp = document.getElementById('fill-' + i);
+    inp.value = ''; inp.classList.remove('correct','wrong');
+  });
+  const fb = document.getElementById('fill-feedback');
+  fb.className = 'feedback'; fb.innerHTML = '';
+}
+
+// ══════════════════════════════════════════════════════
+// OPPGAVE 3 – ORDSTILLING (DRAG & DROP)
+// ══════════════════════════════════════════════════════
+let dragState = dragData.map(d => ({ ...d, placed: [], bank: [...d.words].sort(() => Math.random()-0.5) }));
+
+function buildDrag() {
+  const body = document.getElementById('drag-body');
+  body.innerHTML = dragState.map((s, si) => `
+    <div class="drag-sentence-group">
+      <div class="drag-sentence-num">Setning ${si+1} av ${dragState.length}</div>
+      <div class="drag-zone-label">Bygg setningen her:</div>
+      <div class="drag-zone" id="dzone-${si}" ondragover="event.preventDefault();this.classList.add('over')" ondragleave="this.classList.remove('over')" ondrop="dropWord(event,${si})">
+        ${s.placed.map((w,wi) => `<span class="drag-word placed" draggable="true" data-word="${w}" data-source="zone" data-si="${si}" data-wi="${wi}" ondragstart="dragStart(event)" onclick="returnWord(${si},${wi},'zone')">${w}</span>`).join('')}
+      </div>
+      <div class="drag-zone-label" style="margin-top:8px;">Tilgjengelige ord:</div>
+      <div class="word-bank" id="dbank-${si}">
+        ${s.bank.map((w,wi) => `<span class="drag-word" draggable="true" data-word="${w}" data-source="bank" data-si="${si}" data-wi="${wi}" ondragstart="dragStart(event)" onclick="clickWord(${si},${wi},'bank')">${w}</span>`).join('')}
+      </div>
+      <div class="sort-check-result" id="drag-result-${si}"></div>
+      <div class="btn-group" style="margin-top:0;">
+        <button class="btn btn-primary btn-sm" onclick="checkDrag(${si})">✓ Sjekk</button>
+        <button class="btn btn-secondary btn-sm" onclick="resetDragItem(${si})">↺ Nullstill</button>
+      </div>
+    </div>`).join('');
+}
+
+let dragged = null;
+function dragStart(e) { dragged = e.target; e.target.classList.add('dragging'); }
+function dropWord(e, si) {
+  e.preventDefault();
+  document.querySelector(`#dzone-${si}`).classList.remove('over');
+  if (!dragged) return;
+  const word = dragged.dataset.word;
+  const src = dragged.dataset.source;
+  const srcSi = parseInt(dragged.dataset.si);
+  const wi = parseInt(dragged.dataset.wi);
+  if (src === 'bank') {
+    dragState[srcSi].bank.splice(wi, 1);
+    dragState[si].placed.push(word);
+  } else if (src === 'zone' && srcSi === si) { /* already in zone */ }
+  dragged = null;
+  buildDrag();
+}
+function clickWord(si, wi, src) {
+  const word = dragState[si][src === 'bank' ? 'bank' : 'placed'][wi];
+  dragState[si].bank.splice(wi, 1);
+  dragState[si].placed.push(word);
+  buildDrag();
+}
+function returnWord(si, wi, src) {
+  const word = dragState[si].placed[wi];
+  dragState[si].placed.splice(wi, 1);
+  dragState[si].bank.push(word);
+  buildDrag();
+}
+function checkDrag(si) {
+  const s = dragState[si];
+  const res = document.getElementById('drag-result-' + si);
+  const correct = s.placed.join(' ') === s.correct.join(' ');
+  res.className = 'sort-check-result show ' + (correct ? 'ok' : 'nope');
+  res.textContent = correct ? '✓ Riktig! 🎉' : '✗ Ikke riktig. Prøv igjen. Riktig: ' + s.correct.join(' ');
+}
+function resetDragItem(si) {
+  dragState[si].placed = [];
+  dragState[si].bank = [...dragData[si].words].sort(() => Math.random()-0.5);
+  buildDrag();
+}
+
+// ══════════════════════════════════════════════════════
+// OPPGAVE 4 – SANT / USANT
+// ══════════════════════════════════════════════════════
+function buildTF() {
+  document.getElementById('tf-items').innerHTML = tfData.map((t, i) => `
+    <div class="tf-item" id="tf-item-${i}">
+      <span class="tf-statement">${i+1}. ${t.stmt}</span>
+      <div class="tf-buttons">
+        <button class="tf-btn sant" onclick="selectTF(${i},'sant')" aria-label="Sant">SANT</button>
+        <button class="tf-btn usant" onclick="selectTF(${i},'usant')" aria-label="Usant">USANT</button>
+      </div>
+    </div>`).join('');
+}
+
+const tfSelections = {};
+function selectTF(i, val) {
+  tfSelections[i] = val;
+  const btns = document.querySelectorAll(`#tf-item-${i} .tf-btn`);
+  btns[0].className = 'tf-btn sant' + (val === 'sant' ? ' selected-sant' : '');
+  btns[1].className = 'tf-btn usant' + (val === 'usant' ? ' selected-usant' : '');
+}
+
+function checkTF() {
+  let correct = 0;
+  tfData.forEach((t, i) => {
+    if (tfSelections[i] === undefined) return;
+    const btns = document.querySelectorAll(`#tf-item-${i} .tf-btn`);
+    const userSant = tfSelections[i] === 'sant';
+    const isCorrect = (userSant === t.correct);
+    if (isCorrect) correct++;
+    btns[0].className = 'tf-btn sant ' + (t.correct ? 'reveal-correct' : (userSant ? 'reveal-wrong' : ''));
+    btns[1].className = 'tf-btn usant ' + (!t.correct ? 'reveal-correct' : (!userSant ? 'reveal-wrong' : ''));
+  });
+  const answered = Object.keys(tfSelections).length;
+  const fb = document.getElementById('tf-feedback');
+  showFeedback(fb, correct === tfData.length, `${correct} av ${answered} riktige. ${correct === tfData.length ? '🎉 Perfekt!' : 'Grønne knapper viser riktig svar.'}`);
+}
+
+function resetTF() {
+  Object.keys(tfSelections).forEach(k => delete tfSelections[k]);
+  buildTF();
+  const fb = document.getElementById('tf-feedback');
+  fb.className = 'feedback'; fb.innerHTML = '';
+}
+
+// ══════════════════════════════════════════════════════
+// OPPGAVE 5 – KOBLE PAR
+// ══════════════════════════════════════════════════════
+let matchSelected = null, matchMatched = 0;
+
+function buildMatch() {
+  matchSelected = null; matchMatched = 0;
+  document.getElementById('match-score').textContent = 'Koblede par: 0 / ' + matchPairs.length;
+  const shuffled = [...matchPairs].sort(() => Math.random()-0.5);
+  const transShuffled = [...matchPairs].sort(() => Math.random()-0.5);
+  document.getElementById('match-grid').innerHTML = `
+    <div class="match-col">
+      <div class="match-col-label">🇳🇴 Norsk</div>
+      ${shuffled.map((p,i) => `<div class="match-item" id="mnor-${i}" data-id="${matchPairs.indexOf(p)}" data-type="nor" onclick="selectMatch(this)">${p.nor}</div>`).join('')}
+    </div>
+    <div class="match-col">
+      <div class="match-col-label">💡 Oversettelse</div>
+      ${transShuffled.map((p,i) => `<div class="match-item" id="mtrans-${i}" data-id="${matchPairs.indexOf(p)}" data-type="trans" onclick="selectMatch(this)">${p.trans}</div>`).join('')}
+    </div>`;
+}
+
+function selectMatch(el) {
+  if (el.classList.contains('matched')) return;
+  if (!matchSelected) {
+    el.classList.add('selected');
+    matchSelected = el;
+  } else {
+    if (matchSelected === el) { el.classList.remove('selected'); matchSelected = null; return; }
+    if (matchSelected.dataset.type === el.dataset.type) {
+      matchSelected.classList.remove('selected'); matchSelected = el; return;
+    }
+    if (matchSelected.dataset.id === el.dataset.id) {
+      matchSelected.classList.remove('selected'); matchSelected.classList.add('matched');
+      el.classList.add('matched');
+      matchMatched++;
+      document.getElementById('match-score').textContent = `Koblede par: ${matchMatched} / ${matchPairs.length}`;
+      if (matchMatched === matchPairs.length) {
+        setTimeout(() => { document.getElementById('match-score').textContent = '🎉 Perfekt! Alle par koblet!'; }, 300);
+      }
+    } else {
+      matchSelected.classList.add('wrong-flash'); el.classList.add('wrong-flash');
+      setTimeout(() => { matchSelected.classList.remove('selected','wrong-flash'); el.classList.remove('wrong-flash'); matchSelected = null; }, 500);
+      return;
+    }
+    matchSelected = null;
+  }
+}
+
+function resetMatch() { buildMatch(); }
+
+// ══════════════════════════════════════════════════════
+// OPPGAVE 6 – FLASHKORT
+// ══════════════════════════════════════════════════════
+let fcIndex = 0, fcFlipped = false, fcKnown = 0, fcStudy = 0;
+
+function updateFlash() {
+  const f = flashData[fcIndex];
+  document.getElementById('flash-front').textContent = f.front;
+  document.getElementById('flash-context').textContent = f.ctx;
+  document.getElementById('flash-back').textContent = f.back;
+  document.getElementById('flash-example').textContent = f.ex;
+  document.getElementById('fc-counter').textContent = (fcIndex+1) + ' / ' + flashData.length;
+  const card = document.getElementById('flashcard');
+  card.classList.remove('flipped');
+  fcFlipped = false;
+}
+
+function flipCard() {
+  const card = document.getElementById('flashcard');
+  fcFlipped = !fcFlipped;
+  card.classList.toggle('flipped', fcFlipped);
+}
+
+function nextCard() { fcIndex = (fcIndex + 1) % flashData.length; updateFlash(); }
+function prevCard() { fcIndex = (fcIndex - 1 + flashData.length) % flashData.length; updateFlash(); }
+
+function markCard(val) {
+  if (val === 'yes') fcKnown++; else fcStudy++;
+  document.getElementById('flash-stats').textContent = `Kan: ${fcKnown} \u00a0|\u00a0 Øv mer: ${fcStudy}`;
+  nextCard();
+}
+
+// ══════════════════════════════════════════════════════
+// OPPGAVE 7 – SORTER ORD (KLIKK)
+// ══════════════════════════════════════════════════════
+let sortState = sortData.map(d => ({ ...d, placed: [], bank: [...d.words].sort(() => Math.random()-0.5) }));
+
+function buildSort() {
+  document.getElementById('sort-body').innerHTML = sortState.map((s, si) => `
+    <div class="sort-task">
+      <div class="sort-task-num">Setning ${si+1} av ${sortState.length}</div>
+      <div class="sort-drop ${s.placed.length ? 'has-words' : ''}" id="sort-drop-${si}">
+        ${s.placed.length
+          ? s.placed.map((w,wi) => `<span class="sort-word" onclick="removeFromSort(${si},${wi})" title="Klikk for å fjerne">${w}</span>`).join('')
+          : '<span style="color:var(--muted);font-size:0.88rem;">Klikk ord nedenfor...</span>'
+        }
+      </div>
+      <div class="sort-bank" id="sort-bank-${si}">
+        ${s.bank.map((w,wi) => `<span class="sort-word bank" onclick="addToSort(${si},${wi})">${w}</span>`).join('')}
+      </div>
+      <div class="sort-check-result" id="sort-result-${si}"></div>
+      <div class="btn-group" style="margin-top:0;">
+        <button class="btn btn-primary btn-sm" onclick="checkSort(${si})">✓ Sjekk</button>
+        <button class="btn btn-secondary btn-sm" onclick="resetSortItem(${si})">↺ Nullstill</button>
+      </div>
+    </div>`).join('');
+}
+
+function addToSort(si, wi) {
+  const word = sortState[si].bank[wi];
+  sortState[si].bank.splice(wi, 1);
+  sortState[si].placed.push(word);
+  buildSort();
+}
+function removeFromSort(si, wi) {
+  const word = sortState[si].placed[wi];
+  sortState[si].placed.splice(wi, 1);
+  sortState[si].bank.push(word);
+  buildSort();
+}
+function checkSort(si) {
+  const s = sortState[si];
+  const res = document.getElementById('sort-result-' + si);
+  const userStr = s.placed.join(' ').toLowerCase().replace(/\s*\?\s*/g, ' ?').trim();
+  const correct = userStr === s.correct.toLowerCase();
+  res.className = 'sort-check-result show ' + (correct ? 'ok' : 'nope');
+  res.textContent = correct ? '✓ Riktig! 🎉' : '✗ Prøv igjen. Riktig: ' + s.correct;
+}
+function resetSortItem(si) {
+  sortState[si].placed = [];
+  sortState[si].bank = [...sortData[si].words].sort(() => Math.random()-0.5);
+  buildSort();
+}
+
+// ══════════════════════════════════════════════════════
+// OPPGAVE 8 – DIKTAT (Web Speech API)
+// ══════════════════════════════════════════════════════
+function buildDiktat() {
+  document.getElementById('diktat-body').innerHTML = diktatData.map((d, i) => `
+    <div class="diktat-item">
+      <div class="diktat-controls">
+        <span class="diktat-num">${d.display}</span>
+        <button class="play-btn" id="play-${i}" onclick="speakText(${i})">
+          🔊 Spill av
+        </button>
+      </div>
+      <textarea class="diktat-textarea" id="diktat-ta-${i}" placeholder="Skriv det du hører her..." rows="2" aria-label="Diktatfelt ${i+1}"></textarea>
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+        <button class="btn btn-primary btn-sm" onclick="checkDiktat(${i})">✓ Sjekk</button>
+        <button class="btn btn-secondary btn-sm" onclick="showAnswer(${i})">👁 Vis svar</button>
+        <button class="btn btn-secondary btn-sm" onclick="clearDiktat(${i})">↺ Tøm</button>
+      </div>
+      <div class="diktat-answer" id="diktat-ans-${i}">
+        <strong>Riktig:</strong> ${d.text}
+      </div>
+      <div class="feedback" id="diktat-fb-${i}"></div>
+    </div>`).join('');
+}
+
+function speakText(i) {
+  if (!('speechSynthesis' in window)) {
+    alert('Din nettleser støtter ikke tekst-til-tale. Prøv Chrome.');
+    return;
+  }
+  window.speechSynthesis.cancel();
+  const btn = document.getElementById('play-' + i);
+  btn.textContent = '⏸ Spiller...';
+  btn.classList.add('playing');
+  const utt = new SpeechSynthesisUtterance(diktatData[i].text);
+  utt.lang = 'nb-NO'; utt.rate = 0.85;
+  const voices = window.speechSynthesis.getVoices();
+  const norVoice = voices.find(v => v.lang.startsWith('nb') || v.lang.startsWith('no'));
+  if (norVoice) utt.voice = norVoice;
+  utt.onend = () => { btn.textContent = '🔊 Spill av'; btn.classList.remove('playing'); };
+  window.speechSynthesis.speak(utt);
+}
+
+function checkDiktat(i) {
+  const user = document.getElementById('diktat-ta-' + i).value.trim().toLowerCase().replace(/[.,!?]/g,'');
+  const correct = diktatData[i].text.toLowerCase().replace(/[.,!?]/g,'');
+  const words_user = user.split(/\s+/);
+  const words_correct = correct.split(/\s+/);
+  const matches = words_user.filter((w,idx) => words_correct[idx] === w).length;
+  const pct = Math.round((matches / words_correct.length) * 100);
+  const fb = document.getElementById('diktat-fb-' + i);
+  showFeedback(fb, pct >= 90, pct >= 90 ? `Riktig! (${pct}% treff) 🎉` : `${pct}% riktig. Trykk «Vis svar» for å se.`);
+}
+
+function showAnswer(i) {
+  const ans = document.getElementById('diktat-ans-' + i);
+  ans.classList.toggle('show');
+}
+function clearDiktat(i) {
+  document.getElementById('diktat-ta-' + i).value = '';
+  document.getElementById('diktat-ans-' + i).classList.remove('show');
+  const fb = document.getElementById('diktat-fb-' + i);
+  fb.className = 'feedback'; fb.innerHTML = '';
+}
+
+// ══════════════════════════════════════════════════════
+// UTILITIES
+// ══════════════════════════════════════════════════════
+function showFeedback(el, ok, msg) {
+  el.className = 'feedback show ' + (ok ? 'correct' : 'wrong');
+  el.innerHTML = (ok ? '✓ ' : '✗ ') + msg;
+}
+
+// ══════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  renderMC();
+  buildFill();
+  buildDrag();
+  buildTF();
+  buildMatch();
+  updateFlash();
+  buildSort();
+  buildDiktat();
+  // Preload voices for speech synthesis
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.getVoices();
+    window.speechSynthesis.addEventListener('voiceschanged', () => window.speechSynthesis.getVoices());
+  }
+});
+</script>
+</body>
+</html>

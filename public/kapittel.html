@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kapittel – MOVED Norsk A1-portal</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy: #1B3A5C; --navy2: #2A5480; --gold: #C9960C; --gold2: #E8C050;
+    --white: #FFFFFF; --cream: #F7F4EE; --text: #1A1A2E; --muted: #6B7B8D;
+    --border: #D8DDE3; --success: #2E9E6B; --error: #D94040;
+    --shadow: 0 4px 20px rgba(27,58,92,0.10);
+    --shadow-lg: 0 12px 40px rgba(27,58,92,0.16);
+    --radius: 14px;
+  }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+
+  /* ── TOPPMENY ── */
+  .topbar { background: var(--navy); position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 16px rgba(0,0,0,0.2); }
+  .topbar-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; gap: 12px; height: 64px; }
+  .topbar-logo img { height: 34px; width: auto; }
+  .breadcrumb { display: flex; align-items: center; gap: 8px; margin-left: 8px; }
+  .breadcrumb a { color: rgba(255,255,255,0.6); text-decoration: none; font-size: 0.85rem; }
+  .breadcrumb a:hover { color: white; }
+  .breadcrumb span { color: rgba(255,255,255,0.3); font-size: 0.85rem; }
+  .breadcrumb strong { color: white; font-size: 0.85rem; font-weight: 600; }
+  .topbar-nav { margin-left: auto; display: flex; gap: 4px; }
+  .nav-link { color: rgba(255,255,255,0.7); text-decoration: none; padding: 8px 12px; border-radius: 8px; font-size: 0.85rem; font-weight: 500; transition: all 0.18s; }
+  .nav-link:hover { background: rgba(255,255,255,0.12); color: white; }
+  .logout-btn { color: rgba(255,255,255,0.55); text-decoration: none; padding: 8px 12px; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; font-size: 0.82rem; font-weight: 500; transition: all 0.18s; margin-left: 8px; }
+  .logout-btn:hover { background: rgba(255,255,255,0.1); color: white; }
+
+  /* ── KAPITTEL-HERO ── */
+  .kap-hero {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy2) 100%);
+    padding: 36px 24px 32px;
+    border-bottom: 4px solid var(--gold);
+    position: relative; overflow: hidden;
+  }
+  .kap-hero::before { content: ''; position: absolute; top: -80px; right: -80px; width: 300px; height: 300px; border-radius: 50%; background: rgba(255,255,255,0.04); pointer-events: none; }
+  .kap-hero-inner { max-width: 1200px; margin: 0 auto; position: relative; z-index: 1; display: flex; align-items: flex-start; gap: 24px; flex-wrap: wrap; }
+  .kap-ikon-stor { width: 72px; height: 72px; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; flex-shrink: 0; }
+  .kap-hero-tekst { flex: 1; min-width: 280px; }
+  .kap-tag { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold2); margin-bottom: 8px; }
+  .kap-hero-tittel { font-family: 'Syne', sans-serif; font-size: clamp(1.6rem, 4vw, 2.2rem); font-weight: 800; color: white; letter-spacing: -0.03em; line-height: 1.15; margin-bottom: 10px; }
+  .kap-meta { display: flex; flex-wrap: wrap; gap: 12px; }
+  .kap-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.85); padding: 5px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 500; }
+
+  /* ── LAYOUT ── */
+  .page-body { flex: 1; }
+  .page-inner { max-width: 1200px; margin: 0 auto; padding: 36px 24px 80px; display: grid; grid-template-columns: 280px 1fr; gap: 28px; align-items: start; }
+  @media (max-width: 900px) { .page-inner { grid-template-columns: 1fr; } }
+
+  /* ── VENSTRE KOLONNE ── */
+  .sidebar { display: flex; flex-direction: column; gap: 20px; position: sticky; top: 80px; }
+  .sidebar-card { background: white; border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+  .sidebar-card-header { padding: 14px 18px; background: var(--navy); color: white; display: flex; align-items: center; gap: 8px; }
+  .sidebar-card-header h3 { font-family: 'Syne', sans-serif; font-size: 0.92rem; font-weight: 700; }
+  .sidebar-card-body { padding: 6px 0; }
+  .leksjon-item { display: flex; align-items: center; gap: 12px; padding: 11px 18px; border-bottom: 1px solid var(--cream); cursor: pointer; transition: background 0.15s; text-decoration: none; color: var(--text); }
+  .leksjon-item:last-child { border-bottom: none; }
+  .leksjon-item:hover { background: var(--cream); }
+  .leksjon-item.active { background: #EEF4FF; }
+  .leksjon-num { font-size: 0.72rem; font-weight: 700; color: var(--gold); min-width: 28px; }
+  .leksjon-tittel { font-size: 0.88rem; font-weight: 500; line-height: 1.3; }
+  .gram-list { padding: 12px 18px; display: flex; flex-direction: column; gap: 6px; }
+  .gram-item { font-size: 0.82rem; color: var(--text); padding: 6px 10px; background: var(--cream); border-radius: 8px; border-left: 3px solid var(--navy); line-height: 1.4; }
+  .ord-grid { padding: 12px 18px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .ord-chip { font-size: 0.78rem; font-weight: 500; background: var(--cream); color: var(--navy); padding: 4px 12px; border-radius: 8px; border: 1px solid var(--border); }
+
+  /* ── HØYRE: GENERATOR ── */
+  .generator { display: flex; flex-direction: column; gap: 24px; }
+  .gen-card { background: white; border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+  .gen-card-header { padding: 18px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; }
+  .gen-card-header h2 { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--navy); }
+  .gen-card-header p { font-size: 0.84rem; color: var(--muted); margin-top: 2px; }
+  .gen-card-body { padding: 24px; }
+
+  /* Type-knapper */
+  .type-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; margin-bottom: 20px; }
+  .type-btn {
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    padding: 16px 12px; border: 2px solid var(--border); border-radius: 12px;
+    background: white; cursor: pointer; transition: all 0.18s; font-family: 'DM Sans', sans-serif;
+  }
+  .type-btn:hover { border-color: var(--navy); background: var(--cream); }
+  .type-btn.valgt { border-color: var(--navy); background: #EEF4FF; }
+  .type-btn .type-ikon { font-size: 1.6rem; }
+  .type-btn .type-navn { font-size: 0.82rem; font-weight: 600; color: var(--navy); text-align: center; }
+  .type-btn .type-desc { font-size: 0.72rem; color: var(--muted); text-align: center; line-height: 1.3; }
+
+  /* Input og knapper */
+  .form-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+  .form-group { flex: 1; min-width: 180px; display: flex; flex-direction: column; gap: 6px; }
+  .form-group label { font-size: 0.8rem; font-weight: 700; color: var(--navy); text-transform: uppercase; letter-spacing: 0.06em; }
+  .form-group select, .form-group input {
+    padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 10px;
+    font-family: 'DM Sans', sans-serif; font-size: 0.9rem; color: var(--text);
+    background: var(--cream); outline: none; transition: border-color 0.2s;
+  }
+  .form-group select:focus, .form-group input:focus { border-color: var(--navy); background: white; }
+
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 22px; border-radius: 10px; font-family: 'DM Sans', sans-serif;
+    font-size: 0.92rem; font-weight: 600; cursor: pointer; border: none; transition: all 0.18s; text-decoration: none;
+  }
+  .btn-primary { background: var(--navy); color: white; }
+  .btn-primary:hover { background: var(--navy2); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(27,58,92,0.3); }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+  .btn-gold { background: var(--gold); color: white; }
+  .btn-gold:hover { background: #B08000; transform: translateY(-1px); }
+  .btn-secondary { background: var(--cream); color: var(--navy); border: 1.5px solid var(--border); }
+  .btn-secondary:hover { background: #eee; }
+
+  /* ── FORHÅNDSVISNING ── */
+  .preview-card { background: white; border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+  .preview-header { padding: 16px 24px; background: linear-gradient(135deg, var(--navy), var(--navy2)); color: white; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+  .preview-title { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; }
+  .preview-actions { display: flex; gap: 8px; }
+  .preview-body {
+    padding: 24px; min-height: 200px;
+    font-size: 0.95rem; line-height: 1.75; color: var(--text);
+    white-space: pre-wrap;
+  }
+  .preview-placeholder {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    min-height: 220px; gap: 12px; color: var(--muted);
+  }
+  .preview-placeholder .ph-ikon { font-size: 2.5rem; opacity: 0.4; }
+  .preview-placeholder p { font-size: 0.9rem; text-align: center; max-width: 280px; line-height: 1.6; }
+
+  /* Streaming-animasjon */
+  .streaming::after { content: '▋'; animation: blink 0.7s infinite; display: inline-block; margin-left: 2px; color: var(--navy); }
+  @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+
+  /* Spinner */
+  .spinner { width: 20px; height: 20px; border: 2.5px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── DIGITALE OPPGAVER ── */
+  .oppg-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+  .oppg-kort {
+    padding: 16px; background: var(--cream); border: 1.5px solid var(--border);
+    border-radius: 12px; cursor: pointer; transition: all 0.18s; text-align: center;
+    text-decoration: none; display: flex; flex-direction: column; align-items: center; gap: 8px;
+  }
+  .oppg-kort:hover { border-color: var(--navy); background: #EEF4FF; transform: translateY(-2px); }
+  .oppg-ikon { font-size: 1.8rem; }
+  .oppg-navn { font-size: 0.88rem; font-weight: 700; color: var(--navy); }
+  .oppg-type { font-size: 0.75rem; color: var(--muted); }
+
+  /* Toast */
+  .toast {
+    position: fixed; bottom: 24px; right: 24px; z-index: 999;
+    background: var(--navy); color: white; padding: 14px 22px;
+    border-radius: 12px; font-size: 0.9rem; font-weight: 500;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+    transform: translateY(100px); opacity: 0;
+    transition: all 0.3s ease; pointer-events: none;
+  }
+  .toast.vis { transform: translateY(0); opacity: 1; }
+
+  @media (max-width: 640px) {
+    .type-grid { grid-template-columns: repeat(2, 1fr); }
+    .kap-hero { padding: 28px 16px 24px; }
+    .gen-card-body { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOPPMENY -->
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="topbar-logo" href="/"><img src="/assets/logo_moved.png" alt="MOVED"></a>
+    <nav class="breadcrumb" aria-label="Navigasjonsbane">
+      <a href="/">Kapitler</a>
+      <span>›</span>
+      <strong id="bc-tittel">Laster...</strong>
+    </nav>
+    <nav class="topbar-nav">
+      <a href="/" class="nav-link">← Tilbake</a>
+      <a href="/grammatikk" class="nav-link">📖 Grammatikk</a>
+      <a href="/logg-ut" class="logout-btn">Logg ut</a>
+    </nav>
+  </div>
+</header>
+
+<!-- KAPITTEL-HERO (fylles dynamisk) -->
+<section class="kap-hero" id="kap-hero">
+  <div class="kap-hero-inner">
+    <div class="kap-ikon-stor" id="kap-ikon-stor">⏳</div>
+    <div class="kap-hero-tekst">
+      <div class="kap-tag" id="kap-tag">Laster...</div>
+      <h1 class="kap-hero-tittel" id="kap-tittel">Kapittel</h1>
+      <div class="kap-meta" id="kap-meta"></div>
+    </div>
+  </div>
+</section>
+
+<!-- SIDE-INNHOLD -->
+<div class="page-body">
+  <div class="page-inner">
+
+    <!-- VENSTRE: SIDEBAR -->
+    <aside class="sidebar">
+      <!-- Leksjoner -->
+      <div class="sidebar-card">
+        <div class="sidebar-card-header">
+          <span>📋</span>
+          <h3>Leksjoner</h3>
+        </div>
+        <div class="sidebar-card-body" id="leksjon-liste"></div>
+      </div>
+
+      <!-- Grammatikk -->
+      <div class="sidebar-card">
+        <div class="sidebar-card-header" style="background:#2A5480;">
+          <span>📚</span>
+          <h3>Grammatikk</h3>
+        </div>
+        <div class="gram-list" id="gram-liste"></div>
+      </div>
+
+      <!-- Ordliste -->
+      <div class="sidebar-card">
+        <div class="sidebar-card-header" style="background:#C9960C;">
+          <span>📝</span>
+          <h3>Nøkkelord</h3>
+        </div>
+        <div class="ord-grid" id="ord-liste"></div>
+      </div>
+    </aside>
+
+    <!-- HØYRE: GENERATOR + PREVIEW -->
+    <div class="generator">
+
+      <!-- GENERATOR-KORT -->
+      <div class="gen-card">
+        <div class="gen-card-header">
+          <div>
+            <h2>✨ Lag undervisningsmateriell</h2>
+            <p>Velg type, og klikk generer. Innholdet tilpasses kapittelet automatisk.</p>
+          </div>
+        </div>
+        <div class="gen-card-body">
+
+          <!-- Type-valg -->
+          <div class="type-grid" id="type-grid">
+            <button class="type-btn valgt" data-type="lesetekst" onclick="velgType(this)">
+              <span class="type-ikon">📖</span>
+              <span class="type-navn">Lesetekst</span>
+              <span class="type-desc">Tekst + spørsmål</span>
+            </button>
+            <button class="type-btn" data-type="arbeidsark" onclick="velgType(this)">
+              <span class="type-ikon">✏️</span>
+              <span class="type-navn">Arbeidsark</span>
+              <span class="type-desc">Komplett øvingsark</span>
+            </button>
+            <button class="type-btn" data-type="grammatikk" onclick="velgType(this)">
+              <span class="type-ikon">📚</span>
+              <span class="type-navn">Grammatikk</span>
+              <span class="type-desc">Øvelse + fasit</span>
+            </button>
+            <button class="type-btn" data-type="samtale" onclick="velgType(this)">
+              <span class="type-ikon">🗣️</span>
+              <span class="type-navn">Samtaleøvelse</span>
+              <span class="type-desc">Dialog + fraser</span>
+            </button>
+            <button class="type-btn" data-type="yrkestekst" onclick="velgType(this)">
+              <span class="type-ikon">💼</span>
+              <span class="type-navn">Yrkestekst</span>
+              <span class="type-desc">Yrkesfokus</span>
+            </button>
+          </div>
+
+          <!-- Valg -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="velg-leksjon">Leksjon (valgfri)</label>
+              <select id="velg-leksjon">
+                <option value="">Hele kapittelet</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="velg-yrke">Yrkesbakgrunn (valgfri)</label>
+              <input type="text" id="velg-yrke" placeholder="F.eks. renholder, sykepleier...">
+            </div>
+          </div>
+
+          <!-- Knapper -->
+          <div class="btn-row">
+            <button class="btn btn-primary" id="gen-btn" onclick="generer()">
+              ✨ Generer innhold
+            </button>
+            <button class="btn btn-gold" id="pptx-btn" onclick="genererPPTX()" style="display:none;">
+              📊 Last ned PPTX
+            </button>
+            <button class="btn btn-secondary" id="kopier-btn" onclick="kopier()" style="display:none;">
+              📋 Kopier tekst
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- FORHÅNDSVISNING -->
+      <div class="preview-card" id="preview-card">
+        <div class="preview-header">
+          <div class="preview-title" id="preview-title">Forhåndsvisning</div>
+          <div class="preview-actions">
+            <button class="btn btn-secondary" onclick="nullstill()" style="padding:7px 14px;font-size:0.82rem;" id="nullstill-btn">↺ Nullstill</button>
+          </div>
+        </div>
+        <div class="preview-body" id="preview-body">
+          <div class="preview-placeholder">
+            <span class="ph-ikon">✨</span>
+            <p>Velg oppgavetype og klikk «Generer innhold» for å lage materiell tilpasset dette kapittelet.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- DIGITALE OPPGAVER -->
+      <div class="gen-card">
+        <div class="gen-card-header">
+          <div>
+            <h2>🎮 Digitale oppgaver</h2>
+            <p>Interaktive øvelser elevene kan bruke selv på mobil eller PC.</p>
+          </div>
+        </div>
+        <div class="gen-card-body">
+          <div class="oppg-grid">
+            <div class="oppg-kort" onclick="visDigital('flervalg')">
+              <span class="oppg-ikon">🎯</span>
+              <span class="oppg-navn">Flervalg</span>
+              <span class="oppg-type">5 spørsmål</span>
+            </div>
+            <div class="oppg-kort" onclick="visDigital('fyll-inn')">
+              <span class="oppg-ikon">✏️</span>
+              <span class="oppg-navn">Fyll inn</span>
+              <span class="oppg-type">5 setninger</span>
+            </div>
+            <div class="oppg-kort" onclick="visDigital('ordstilling')">
+              <span class="oppg-ikon">🔀</span>
+              <span class="oppg-navn">Ordstilling</span>
+              <span class="oppg-type">Drag & drop</span>
+            </div>
+            <div class="oppg-kort" onclick="visDigital('sant-usant')">
+              <span class="oppg-ikon">📖</span>
+              <span class="oppg-navn">Sant/usant</span>
+              <span class="oppg-type">Lesetekst</span>
+            </div>
+            <div class="oppg-kort" onclick="visDigital('koble-par')">
+              <span class="oppg-ikon">🔗</span>
+              <span class="oppg-navn">Koble par</span>
+              <span class="oppg-type">Matching</span>
+            </div>
+            <div class="oppg-kort" onclick="visDigital('flashkort')">
+              <span class="oppg-ikon">🃏</span>
+              <span class="oppg-navn">Flashkort</span>
+              <span class="oppg-type">Ordlæring</span>
+            </div>
+            <div class="oppg-kort" onclick="visDigital('sorter-ord')">
+              <span class="oppg-ikon">🎵</span>
+              <span class="oppg-navn">Sorter ord</span>
+              <span class="oppg-type">Klikk-bygg</span>
+            </div>
+            <div class="oppg-kort" onclick="visDigital('diktat')">
+              <span class="oppg-ikon">🎤</span>
+              <span class="oppg-navn">Diktat</span>
+              <span class="oppg-type">Lyd + skriv</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer style="background:var(--navy);padding:24px;">
+  <div style="max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+    <img src="/assets/logo_moved.png" alt="MOVED" style="height:28px;">
+    <span style="color:rgba(255,255,255,0.4);font-size:0.8rem;">Molde voksenopplæringssenter · MBO</span>
+    <img src="/assets/logo_kommune.png" alt="Molde Kommune" style="height:24px;filter:brightness(5);opacity:0.4;">
+  </div>
+</footer>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── STATE ────────────────────────────────────────────
+let kapData = null;
+let valgtType = 'lesetekst';
+let genererResult = '';
+const kapittelId = window.location.pathname.split('/').pop();
+
+// ── INIT ─────────────────────────────────────────────
+async function init() {
+  try {
+    const r = await fetch(`/api/kapitler/${kapittelId}`);
+    if (!r.ok) { window.location.href = '/'; return; }
+    kapData = await r.json();
+    renderKapittelInfo();
+  } catch (e) {
+    console.error(e);
+    window.location.href = '/';
+  }
+}
+
+function renderKapittelInfo() {
+  // Breadcrumb
+  document.getElementById('bc-tittel').textContent = `Kap. ${kapData.id}: ${kapData.tittel}`;
+  document.title = `Kap. ${kapData.id}: ${kapData.tittel} – MOVED`;
+
+  // Hero
+  const hero = document.getElementById('kap-hero');
+  hero.style.borderBottomColor = `#${kapData.farge}`;
+  document.getElementById('kap-ikon-stor').textContent = kapData.ikon;
+  document.getElementById('kap-ikon-stor').style.background = `#${kapData.farge}22`;
+  document.getElementById('kap-tag').textContent = `Kapittel ${kapData.id} · God i norsk A1`;
+  document.getElementById('kap-tittel').textContent = kapData.tittel;
+  document.getElementById('kap-meta').innerHTML = `
+    <span class="kap-badge">📚 ${kapData.leksjoner.length} leksjoner</span>
+    <span class="kap-badge">💼 ${kapData.yrke}</span>
+    <span class="kap-badge">🔊 Uttale: ${kapData.uttale[0] || 'Se kapittelet'}</span>
+  `;
+
+  // Leksjoner
+  const leksjonListe = document.getElementById('leksjon-liste');
+  leksjonListe.innerHTML = kapData.leksjoner.map(l => `
+    <div class="leksjon-item" onclick="velgLeksjon('${l.id}')">
+      <span class="leksjon-num">${l.id}</span>
+      <span class="leksjon-tittel">${l.tittel}</span>
+    </div>
+  `).join('');
+
+  // Populer leksjon-select
+  const sel = document.getElementById('velg-leksjon');
+  kapData.leksjoner.forEach(l => {
+    const opt = document.createElement('option');
+    opt.value = l.id;
+    opt.textContent = `${l.id}: ${l.tittel}`;
+    sel.appendChild(opt);
+  });
+
+  // Grammatikk
+  document.getElementById('gram-liste').innerHTML = kapData.grammatikk.map(g => `
+    <div class="gram-item">${g}</div>
+  `).join('');
+
+  // Ordliste
+  document.getElementById('ord-liste').innerHTML = kapData.ordliste.map(o => `
+    <span class="ord-chip">${o}</span>
+  `).join('');
+
+  // Yrke i yrke-felt
+  if (kapData.yrke) {
+    document.getElementById('velg-yrke').placeholder = `F.eks. ${kapData.yrke}...`;
+  }
+}
+
+function velgLeksjon(id) {
+  document.getElementById('velg-leksjon').value = id;
+  document.querySelectorAll('.leksjon-item').forEach(el => el.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+}
+
+function velgType(btn) {
+  document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('valgt'));
+  btn.classList.add('valgt');
+  valgtType = btn.dataset.type;
+}
+
+// ── GENERER ──────────────────────────────────────────
+async function generer() {
+  if (!kapData) return;
+  const leksjon = document.getElementById('velg-leksjon').value;
+  const yrke = document.getElementById('velg-yrke').value.trim();
+  const btn = document.getElementById('gen-btn');
+
+  // UI: loading
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div> Genererer...';
+  genererResult = '';
+
+  const previewBody = document.getElementById('preview-body');
+  previewBody.textContent = '';
+  previewBody.classList.add('streaming');
+  document.getElementById('preview-title').textContent =
+    `${typeTittel(valgtType)} – Kap. ${kapData.id}: ${kapData.tittel}`;
+  document.getElementById('pptx-btn').style.display = 'none';
+  document.getElementById('kopier-btn').style.display = 'none';
+
+  try {
+    const resp = await fetch('/api/generer', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ kapittelId: kapData.id, leksjon, type: valgtType, yrke })
+    });
+
+    if (!resp.ok) throw new Error(`Server feil: ${resp.status}`);
+
+    const reader = resp.body.getReader();
+    const decoder = new TextDecoder('utf-8');
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      const chunk = decoder.decode(value, { stream: true });
+      genererResult += chunk;
+      previewBody.textContent = genererResult;
+    }
+
+    previewBody.classList.remove('streaming');
+    document.getElementById('pptx-btn').style.display = 'inline-flex';
+    document.getElementById('kopier-btn').style.display = 'inline-flex';
+    visToast('✅ Innhold generert!');
+
+  } catch (e) {
+    previewBody.classList.remove('streaming');
+    previewBody.textContent = '⚠️ Generering feilet. Sjekk at API-nøkkel er satt i Vercel-miljøvariablene og prøv igjen.';
+    console.error(e);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '✨ Generer innhold';
+  }
+}
+
+// ── LAST NED PPTX ─────────────────────────────────────
+async function genererPPTX() {
+  const btn = document.getElementById('pptx-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div> Lager PPTX...';
+
+  try {
+    const resp = await fetch('/api/generer-pptx', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        kapittelId: kapData.id,
+        tittel: kapData.tittel,
+        innhold: genererResult.slice(0, 800)
+      })
+    });
+
+    if (!resp.ok) throw new Error('PPTX-feil');
+
+    const blob = await resp.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `kap${kapData.id}_${kapData.tittel.replace(/\s+/g,'_').toLowerCase()}.pptx`;
+    a.click();
+    URL.revokeObjectURL(url);
+    visToast('📊 PPTX lastet ned!');
+  } catch (e) {
+    visToast('⚠️ PPTX-generering feilet. Prøv igjen.', true);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '📊 Last ned PPTX';
+  }
+}
+
+// ── KOPIER ───────────────────────────────────────────
+async function kopier() {
+  if (!genererResult) return;
+  try {
+    await navigator.clipboard.writeText(genererResult);
+    visToast('📋 Tekst kopiert til utklipstavlen!');
+  } catch (e) {
+    visToast('⚠️ Kunne ikke kopiere. Marker teksten manuelt.', true);
+  }
+}
+
+function nullstill() {
+  genererResult = '';
+  document.getElementById('preview-body').innerHTML = `
+    <div class="preview-placeholder">
+      <span class="ph-ikon">✨</span>
+      <p>Velg oppgavetype og klikk «Generer innhold» for å lage materiell tilpasset dette kapittelet.</p>
+    </div>`;
+  document.getElementById('preview-title').textContent = 'Forhåndsvisning';
+  document.getElementById('pptx-btn').style.display = 'none';
+  document.getElementById('kopier-btn').style.display = 'none';
+}
+
+// ── DIGITALE OPPGAVER ─────────────────────────────────
+function visDigital(type) {
+  // Åpne HTML-oppgavefilen i ny fane med type-parameter
+  window.open(`/norsk_a1_oppgaver.html#${type}`, '_blank');
+}
+
+// ── UTILITIES ─────────────────────────────────────────
+function typeTittel(t) {
+  return { lesetekst: 'Lesetekst', arbeidsark: 'Arbeidsark', grammatikk: 'Grammatikkøvelse', samtale: 'Samtaleøvelse', yrkestekst: 'Yrkestekst' }[t] || t;
+}
+
+function visToast(msg, feil = false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.background = feil ? '#D94040' : '#1B3A5C';
+  t.classList.add('vis');
+  setTimeout(() => t.classList.remove('vis'), 3200);
+}
+
+init();
+</script>
+</body>
+</html>

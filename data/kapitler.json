@@ -1,0 +1,287 @@
+[
+  {
+    "id": 1,
+    "tittel": "Vi blir kjent",
+    "farge": "4A9FD5",
+    "ikon": "👋",
+    "tema": "greeting,norway,people",
+    "leksjoner": [
+      { "id": "1.1", "tittel": "Hvor kommer du fra?" },
+      { "id": "1.2", "tittel": "Hva heter du?" },
+      { "id": "1.3", "tittel": "Nå bor jeg i Norge" },
+      { "id": "1.4", "tittel": "Jeg snakker litt norsk" },
+      { "id": "1.5", "tittel": "Yrkestekst: Jeg er lærer" }
+    ],
+    "funksjoner": ["Hilsefraser", "Navn", "Språk og land", "Be om gjentagelse", "Si at man ikke forstår", "Fylle ut skjema", "Tall 1–10", "Alfabetet", "Ukedagene, timeplan"],
+    "grammatikk": ["Personlig pronomen (subjekt)", "Verb i presens", "Ordstilling: V2-regelen", "Plassering av ikke", "Helsetninger, spørresetninger", "Spørreord: hva, hvem, hvor", "Tegnsetting"],
+    "uttale": ["a / o / å"],
+    "yrke": "Lærer",
+    "ordliste": ["hete", "komme fra", "bo", "snakke", "forstå", "lære", "land", "språk", "navn", "adresse"]
+  },
+  {
+    "id": 2,
+    "tittel": "Hvordan går det?",
+    "farge": "3BBFA3",
+    "ikon": "🤝",
+    "tema": "friends,norway,meeting",
+    "leksjoner": [
+      { "id": "2.1", "tittel": "Kjenner du Marek?" },
+      { "id": "2.2", "tittel": "Jeg kom til Norge i mai" },
+      { "id": "2.3", "tittel": "Jeg savner dem" },
+      { "id": "2.4", "tittel": "Hva betyr det?" },
+      { "id": "2.5", "tittel": "Yrkestekst: Jeg er lege" }
+    ],
+    "funksjoner": ["Hilsefraser", "Alder", "Telefonnummer", "Hva gjør du nå?", "Når kom du til Norge?", "Vennskap", "Sivilstatus", "Måneder og årstall", "Tall"],
+    "grammatikk": ["Spørreord: når, hvor gammel, hvordan", "Substantiv: kjønn og tall", "Preposisjoner for adresse: i, på", "Personlig pronomen (objekt)", "SVO-setninger", "Inversjon med tid først"],
+    "uttale": ["e / i / y"],
+    "yrke": "Lege",
+    "ordliste": ["alder", "sivilstatus", "telefonnummer", "savne", "vennskap", "gifte seg", "skille seg", "enslig", "måneder", "årstall"]
+  },
+  {
+    "id": 3,
+    "tittel": "Familie og fritid",
+    "farge": "E8650A",
+    "ikon": "👨‍👩‍👧",
+    "tema": "family,norway,home",
+    "leksjoner": [
+      { "id": "3.1", "tittel": "De forteller om familien" },
+      { "id": "3.2", "tittel": "Jeg kommer ikke på norskkurs i dag" },
+      { "id": "3.3", "tittel": "Sompit skal besøke svigermor" },
+      { "id": "3.4", "tittel": "Skal vi gå på konsert?" },
+      { "id": "3.5", "tittel": "Yrkestekst: Jeg er bilmekaniker" }
+    ],
+    "funksjoner": ["Familie", "Husarbeid og aktiviteter", "Hjemme", "Fritidsinteresser", "Sende SMS", "Gjøre avtaler", "Pausesnakk på jobb"],
+    "grammatikk": ["Eieforhold med «til»", "Substantiv: bestemt form", "Stedsadverb: hjem, hjemme", "Spørreord: hvor mange", "Modalverb: skal, vil, må, kan", "Verb: infinitiv etter modalverb"],
+    "uttale": ["u / ø / øy"],
+    "yrke": "Bilmekaniker",
+    "ordliste": ["familie", "søsken", "foreldre", "svigermor", "svigerfar", "husarbeid", "fritid", "hobby", "avtale", "konsert"]
+  },
+  {
+    "id": 4,
+    "tittel": "En vanlig dag",
+    "farge": "C9960C",
+    "ikon": "☀️",
+    "tema": "daily routine,norway,morning",
+    "leksjoner": [
+      { "id": "4.1", "tittel": "Hva er klokka?" },
+      { "id": "4.2", "tittel": "Hjemme hos Bjørnar" },
+      { "id": "4.3", "tittel": "Skal vi møtes en dag?" },
+      { "id": "4.4", "tittel": "På kafé" },
+      { "id": "4.5", "tittel": "Yrkestekst: Jeg er servitør" }
+    ],
+    "funksjoner": ["Klokka", "Måltider", "Fritid", "Tider på døgnet", "Bestille"],
+    "grammatikk": ["Pronomen: refleksiv form: seg", "Refleksive verb", "Adverb: rekkefølge i tid", "Tekstbinding: og, men", "Verb: infinitiv med å", "Substantiv"],
+    "uttale": ["æ / ei / au"],
+    "yrke": "Servitør",
+    "ordliste": ["klokke", "morgen", "formiddag", "ettermiddag", "kveld", "måltid", "frokost", "lunsj", "middag", "bestille"]
+  },
+  {
+    "id": 5,
+    "tittel": "Hvordan er været?",
+    "farge": "2563A8",
+    "ikon": "🌤️",
+    "tema": "weather,norway,seasons",
+    "leksjoner": [
+      { "id": "5.1", "tittel": "Liker du været i Norge?" },
+      { "id": "5.2", "tittel": "På stranda" },
+      { "id": "5.3", "tittel": "Jeg savner sommeren" },
+      { "id": "5.4", "tittel": "Hvilken dato er det?" },
+      { "id": "5.5", "tittel": "Yrkestekst: Jeg er barnehageassistent" }
+    ],
+    "funksjoner": ["Været og årstidene", "Uteaktiviteter", "Ordenstall", "Dato og fødselsdato", "Henting i barnehage", "Personalmøte"],
+    "grammatikk": ["Verb: verbuttrykk med infinitiv", "Substantiv: bestemt form", "Stedsadverb: ut, ute, inn, inne", "Det-setninger om været"],
+    "uttale": ["Sj-lyd / kj-lyd"],
+    "yrke": "Barnehageassistent",
+    "ordliste": ["vær", "sol", "regn", "vind", "snø", "årstid", "sommer", "vinter", "dato", "fødselsdato"]
+  },
+  {
+    "id": 6,
+    "tittel": "Hva gjorde du i går?",
+    "farge": "6D2E46",
+    "ikon": "📅",
+    "tema": "weekend,leisure,norway",
+    "leksjoner": [
+      { "id": "6.1", "tittel": "Hva gjorde du i går?" },
+      { "id": "6.2", "tittel": "Hva gjorde du i helga?" },
+      { "id": "6.3", "tittel": "Hva gjorde du i fritida i hjemlandet?" },
+      { "id": "6.4", "tittel": "Når kom du til Norge?" },
+      { "id": "6.5", "tittel": "Yrkestekst: Jeg er hotellmedarbeider" }
+    ],
+    "funksjoner": ["Pausesnakk på jobb", "Fritidsaktiviteter"],
+    "grammatikk": ["Verb: preteritum", "Tidsuttrykk i fortid", "Preposisjoner for tid"],
+    "uttale": ["R og retroflekser"],
+    "yrke": "Hotellmedarbeider",
+    "ordliste": ["i går", "i helga", "forrige uke", "preteritum", "besøke", "reise", "aktivitet", "fritid", "fortid", "helg"]
+  },
+  {
+    "id": 7,
+    "tittel": "God tur!",
+    "farge": "028090",
+    "ikon": "🚌",
+    "tema": "transport,norway,travel",
+    "leksjoner": [
+      { "id": "7.1", "tittel": "Unnskyld, hvordan kommer jeg til Frognerparken?" },
+      { "id": "7.2", "tittel": "Hva gjorde du i Bergen?" },
+      { "id": "7.3", "tittel": "Unnskyld at jeg kommer for sent!" },
+      { "id": "7.4", "tittel": "Går denne bussen til Førde?" },
+      { "id": "7.5", "tittel": "Yrkestekst: Jeg er bussjåfør" }
+    ],
+    "funksjoner": ["Transportmidler", "Veibeskrivelser", "Fortelle om en reise", "Komme for sent", "Komme presis"],
+    "grammatikk": ["Preposisjoner og uttrykk for plassering", "Stedsadverb: hit, her, dit, der", "Pekeord: den, denne, det, dette, de, disse", "Tekstbinding: for"],
+    "uttale": ["Trykk på stavelser"],
+    "yrke": "Bussjåfør",
+    "ordliste": ["buss", "trikk", "tog", "fly", "bil", "holdeplass", "stasjon", "billett", "veibeskrivelse", "retning"]
+  },
+  {
+    "id": 8,
+    "tittel": "På handletur",
+    "farge": "F96167",
+    "ikon": "🛒",
+    "tema": "shopping,norway,market",
+    "leksjoner": [
+      { "id": "8.1", "tittel": "Ingrid leter etter bil på finn.no" },
+      { "id": "8.2", "tittel": "Bjørnar liker å gå på loppemarked" },
+      { "id": "8.3", "tittel": "Vi bare kikker" },
+      { "id": "8.4", "tittel": "Marit handler til bursdagsmiddag" },
+      { "id": "8.5", "tittel": "Yrkestekst: Jeg er butikkmedarbeider / frisør" }
+    ],
+    "funksjoner": ["Klær, farger og størrelser", "Gå i butikken og handle", "Matvarer", "Bruke finn.no", "Loppemarked"],
+    "grammatikk": ["Adjektiv: kjønn og tall, regelrett bøyning", "Substantiv: kjønn, form og tall", "Spørreord: hvilken, hvilket, hvilke, hvor mange, hvor mye", "Mengdeord: mye, mange", "Så som gradsadverb", "Årsaksforklaring: for å"],
+    "uttale": ["Konsonantforbindelser"],
+    "yrke": "Butikkmedarbeider / Frisør",
+    "ordliste": ["handle", "butikk", "pris", "billig", "dyr", "størrelse", "farge", "matvare", "loppemarked", "finn.no"]
+  },
+  {
+    "id": 9,
+    "tittel": "Her bor jeg",
+    "farge": "2C5F2D",
+    "ikon": "🏠",
+    "tema": "apartment,norway,neighborhood",
+    "leksjoner": [
+      { "id": "9.1", "tittel": "Hvordan bor du?" },
+      { "id": "9.2", "tittel": "Marek har flyttet" },
+      { "id": "9.3", "tittel": "Hvor lenge har du bodd her?" },
+      { "id": "9.4", "tittel": "Har du vært på dugnad?" },
+      { "id": "9.5", "tittel": "Yrkestekst: Jeg er snekker" }
+    ],
+    "funksjoner": ["Boligtyper, inventar, nærmiljø, naboforhold", "Dugnad", "Oppussing", "Eie og leie", "Boliglån"],
+    "grammatikk": ["Presens perfektum", "Adjektiv: bestemt form og flere uregelrette bøyninger"],
+    "uttale": ["Diftonger og setningstrykk"],
+    "yrke": "Snekker",
+    "ordliste": ["bolig", "leilighet", "hus", "hytte", "leie", "eie", "nabo", "dugnad", "oppussing", "inventar"]
+  },
+  {
+    "id": 10,
+    "tittel": "Det må vi feire!",
+    "farge": "F5A623",
+    "ikon": "🎉",
+    "tema": "celebration,norway,holiday",
+    "leksjoner": [
+      { "id": "10.1", "tittel": "Jeg gleder meg til bursdagen min" },
+      { "id": "10.2", "tittel": "Vil dere komme i bryllupet vårt?" },
+      { "id": "10.3", "tittel": "Vennene våre giftet seg i helga" },
+      { "id": "10.4", "tittel": "Innflyttingsfest hos Marek og Ewa" },
+      { "id": "10.5", "tittel": "Yrkestekst: Jeg er kokk" }
+    ],
+    "funksjoner": ["Feiringer, seremonier og høytider i Norge og i hjemlandet", "Invitasjoner"],
+    "grammatikk": ["Eiendomsord"],
+    "uttale": [],
+    "yrke": "Kokk",
+    "ordliste": ["bursdag", "bryllup", "feire", "gave", "invitasjon", "høytid", "jul", "påske", "gratulere", "fest"]
+  },
+  {
+    "id": 11,
+    "tittel": "Det er typisk norsk",
+    "farge": "1B3A5C",
+    "ikon": "🇳🇴",
+    "tema": "norway culture,nature,tradition",
+    "leksjoner": [
+      { "id": "11.1", "tittel": "Hva er typisk norsk?" },
+      { "id": "11.2", "tittel": "Det er typisk norsk å dra på hytta" },
+      { "id": "11.3", "tittel": "Norsk geografi" },
+      { "id": "11.4", "tittel": "En hilsen fra Hurtigruten" },
+      { "id": "11.5", "tittel": "Yrkestekst: Jeg er turistguide" }
+    ],
+    "funksjoner": ["Typisk norsk", "Ferievaner", "Bruk av naturen", "Norsk natur og geografi", "Hurtigruten", "Kjæledyr"],
+    "grammatikk": ["Adjektiv: gradbøyning", "Som-setninger"],
+    "uttale": ["Sammensatte ord og mer om trykk"],
+    "yrke": "Turistguide",
+    "ordliste": ["typisk", "natur", "hytte", "fjord", "fjell", "skog", "friluftsliv", "geografi", "Hurtigruten", "kjæledyr"]
+  },
+  {
+    "id": 12,
+    "tittel": "Kosthold og helse",
+    "farge": "2E9E6B",
+    "ikon": "🏥",
+    "tema": "health,doctor,norway",
+    "leksjoner": [
+      { "id": "12.1", "tittel": "Hvordan føler du deg?" },
+      { "id": "12.2", "tittel": "Jeg føler meg litt dårlig" },
+      { "id": "12.3", "tittel": "Vi må holde oss i form" },
+      { "id": "12.4", "tittel": "Vi må prøve å spise sunt" },
+      { "id": "12.5", "tittel": "Yrkestekst: Jeg er pleieassistent" }
+    ],
+    "funksjoner": ["Helse, sykdommer, kosthold, kroppsdeler", "Å holde seg i form, å ha et godt liv", "Helseyrker, fastlegeordningen", "Nødnumrene"],
+    "grammatikk": ["Leddsetninger: synes at, tror at, sier at, spør om", "Adverb: måte"],
+    "uttale": ["Setningstrykk"],
+    "yrke": "Pleieassistent",
+    "ordliste": ["helse", "syk", "lege", "fastlege", "medisin", "kropp", "symptom", "kosthold", "trening", "nødnummer"]
+  },
+  {
+    "id": 13,
+    "tittel": "Utdanning for alle",
+    "farge": "990011",
+    "ikon": "📚",
+    "tema": "school,education,norway",
+    "leksjoner": [
+      { "id": "13.1", "tittel": "Skole i Norge" },
+      { "id": "13.2", "tittel": "Skal du på foreldremøte?" },
+      { "id": "13.3", "tittel": "Yrkesfaglig opplæring i Norge" },
+      { "id": "13.4", "tittel": "Å studere i Norge" },
+      { "id": "13.5", "tittel": "Yrkestekst: Jeg er renholder" }
+    ],
+    "funksjoner": ["Skole og utdanning i Norge og i hjemlandet", "Skole/hjem-samarbeid", "Fagbrev og yrkesfaglig opplæring", "Lån og stipend", "Drømmer og framtidsplaner"],
+    "grammatikk": ["Eiendomsord, refleksiv form: sin, si, sitt, sine", "Leddsetninger: da, når, fordi", "Ordstilling i leddsetning: S(A)V"],
+    "uttale": ["Fokus på lange ord i tekstene"],
+    "yrke": "Renholder",
+    "ordliste": ["skole", "utdanning", "fagbrev", "studieplass", "lån", "stipend", "foreldremøte", "grunnskole", "videregående", "universitet"]
+  },
+  {
+    "id": 14,
+    "tittel": "Jeg vil finne en jobb!",
+    "farge": "36454F",
+    "ikon": "💼",
+    "tema": "job,work,office,norway",
+    "leksjoner": [
+      { "id": "14.1", "tittel": "Har du erfaring?" },
+      { "id": "14.2", "tittel": "På sjefens kontor" },
+      { "id": "14.3", "tittel": "Arbeidsliv" },
+      { "id": "14.4", "tittel": "Vanskelige situasjoner på jobben" },
+      { "id": "14.5", "tittel": "Yrkestekst: Jeg er barneskolelærer" }
+    ],
+    "funksjoner": ["Arbeidsliv", "Regler i arbeidslivet", "Egenskaper", "Jobben din, yrket ditt", "Tips til hvordan man kan finne en jobb", "Søknad, cv, jobbintervju", "Vanskelige situasjoner på jobb", "Motta beskjeder"],
+    "grammatikk": ["Leddsetninger: hvis", "Forskjellen på hvis og om", "Mer om ordstilling i leddsetning, SAV"],
+    "uttale": ["Sammensatte ord"],
+    "yrke": "Barneskolelærer",
+    "ordliste": ["jobb", "arbeid", "erfaring", "søknad", "CV", "intervju", "stilling", "arbeidsgiver", "arbeidstaker", "kontrakt"]
+  },
+  {
+    "id": 15,
+    "tittel": "Innvandrer i Norge",
+    "farge": "84B59F",
+    "ikon": "🌍",
+    "tema": "integration,community,norway",
+    "leksjoner": [
+      { "id": "15.1", "tittel": "«Du må finne den hemmelige døra.»" },
+      { "id": "15.2", "tittel": "«Jeg vil vise innvandrerkvinner at alt er mulig!»" },
+      { "id": "15.3", "tittel": "«Kast deg ut i samtaler med nordmenn!»" },
+      { "id": "15.4", "tittel": "«Du kan klare nesten alt hvis du jobber hardt!»" },
+      { "id": "15.5", "tittel": "Hun: Er det sant?" }
+    ],
+    "funksjoner": ["Frivillige organisasjoner og møteplasser i Norge"],
+    "grammatikk": ["Adverb: derfor", "Forskjell på derfor og fordi"],
+    "uttale": ["Fokus på lange ord i tekstene"],
+    "yrke": "Innvandrer / Ulike yrker",
+    "ordliste": ["innvandrer", "integrering", "organisasjon", "møteplass", "frivillig", "nettverk", "mulighet", "drøm", "nordmenn", "samfunn"]
+  }
+]

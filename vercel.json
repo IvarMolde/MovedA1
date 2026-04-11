@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "server.js", "use": "@vercel/node" }
+  ],
+  "routes": [
+    { "src": "/(.*)", "dest": "/server.js" }
+  ],
+  "env": {
+    "APP_PASSORD": "@app_passord",
+    "GOOGLE_API_KEY": "@google_api_key",
+    "SESSION_SECRET": "@session_secret"
+  }
+}

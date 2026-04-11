@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grammatikkbank – MOVED Norsk A1-portal</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy: #1B3A5C; --gold: #C9960C; --gold2: #E8C050;
+    --white: #FFFFFF; --cream: #F7F4EE; --text: #1A1A2E; --muted: #6B7B8D;
+    --border: #D8DDE3; --shadow: 0 4px 20px rgba(27,58,92,0.10);
+    --radius: 14px;
+  }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); min-height: 100vh; }
+
+  .topbar { background: var(--navy); position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 16px rgba(0,0,0,0.2); }
+  .topbar-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; gap: 12px; height: 64px; }
+  .topbar-logo img { height: 34px; }
+  .topbar-nav { margin-left: auto; display: flex; gap: 4px; }
+  .nav-link { color: rgba(255,255,255,0.7); text-decoration: none; padding: 8px 12px; border-radius: 8px; font-size: 0.85rem; font-weight: 500; transition: all 0.18s; }
+  .nav-link:hover, .nav-link.active { background: rgba(255,255,255,0.15); color: white; }
+  .logout-btn { color: rgba(255,255,255,0.55); text-decoration: none; padding: 8px 12px; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; font-size: 0.82rem; margin-left: 8px; transition: all 0.18s; }
+  .logout-btn:hover { background: rgba(255,255,255,0.1); color: white; }
+
+  .hero { background: linear-gradient(135deg, var(--navy), #2A5480); padding: 40px 24px 36px; border-bottom: 4px solid var(--gold); }
+  .hero-inner { max-width: 1200px; margin: 0 auto; }
+  .hero h1 { font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800; color: white; letter-spacing: -0.03em; margin-bottom: 8px; }
+  .hero p { color: rgba(255,255,255,0.72); font-size: 1rem; }
+
+  .main { max-width: 1200px; margin: 0 auto; padding: 36px 24px 80px; }
+
+  /* Søk */
+  .search-wrap { margin-bottom: 32px; position: relative; }
+  .search-icon { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); font-size: 1.1rem; pointer-events: none; }
+  #sok-input {
+    width: 100%; padding: 15px 18px 15px 50px;
+    border: 2px solid var(--border); border-radius: 14px;
+    font-family: 'DM Sans', sans-serif; font-size: 1rem; background: white;
+    outline: none; transition: border-color 0.2s;
+    box-shadow: var(--shadow);
+  }
+  #sok-input:focus { border-color: var(--navy); }
+
+  /* Grid */
+  .gram-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+  .gram-kort {
+    background: white; border-radius: var(--radius); box-shadow: var(--shadow);
+    overflow: hidden; border: 1.5px solid transparent; transition: all 0.18s;
+  }
+  .gram-kort:hover { border-color: var(--border); transform: translateY(-2px); box-shadow: 0 12px 32px rgba(27,58,92,0.12); }
+  .gram-kort-top { padding: 14px 18px; display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+  .gram-emne { font-family: 'Syne', sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--navy); line-height: 1.3; flex: 1; }
+  .gram-kap-badge { font-size: 0.72rem; font-weight: 700; padding: 3px 10px; border-radius: 10px; white-space: nowrap; flex-shrink: 0; }
+  .gram-divider { height: 1px; background: var(--border); margin: 0 18px; }
+  .gram-kort-bunn { padding: 10px 18px 14px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+  .gram-kaptittel { font-size: 0.8rem; color: var(--muted); }
+  .gram-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 16px; background: var(--navy); color: white;
+    border: none; border-radius: 8px; font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.18s;
+    text-decoration: none;
+  }
+  .gram-btn:hover { background: #2A5480; }
+
+  .antall-tekst { font-size: 0.85rem; color: var(--muted); margin-bottom: 16px; }
+  .ingen-treff { text-align: center; padding: 60px 20px; color: var(--muted); }
+  .ingen-treff .stor-ikon { font-size: 3rem; margin-bottom: 12px; opacity: 0.4; }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="/"><img src="/assets/logo_moved.png" alt="MOVED" style="height:34px;"></a>
+    <nav class="topbar-nav">
+      <a href="/" class="nav-link">📚 Kapitler</a>
+      <a href="/grammatikk" class="nav-link active">📖 Grammatikk</a>
+      <a href="/logg-ut" class="logout-btn">Logg ut</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <h1>📖 Grammatikkbank</h1>
+    <p>Søk blant alle grammatikkemner fra God i norsk – kapittel 1–15</p>
+  </div>
+</section>
+
+<main class="main">
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="sok-input" placeholder="Søk etter grammatikkemne, f.eks. «V2» eller «preteritum»..." oninput="filtrerGram()">
+  </div>
+  <p class="antall-tekst" id="antall-tekst">Laster...</p>
+  <div class="gram-grid" id="gram-grid"></div>
+</main>
+
+<footer style="background:var(--navy);padding:24px;">
+  <div style="max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+    <img src="/assets/logo_moved.png" alt="MOVED" style="height:28px;">
+    <span style="color:rgba(255,255,255,0.4);font-size:0.8rem;">Molde voksenopplæringssenter · MBO</span>
+    <img src="/assets/logo_kommune.png" alt="Molde Kommune" style="height:24px;filter:brightness(5);opacity:0.4;">
+  </div>
+</footer>
+
+<script>
+let alleGram = [];
+
+async function lastGram() {
+  const r = await fetch('/api/kapitler');
+  const kapitler = await r.json();
+
+  // Bygg flat liste av alle grammatikkemner
+  kapitler.forEach(k => {
+    k.grammatikk.forEach(g => {
+      alleGram.push({ emne: g, kapId: k.id, kapTittel: k.tittel, kapFarge: k.farge });
+    });
+  });
+
+  visGram(alleGram);
+}
+
+function visGram(liste) {
+  document.getElementById('antall-tekst').textContent = `${liste.length} grammatikkemner funnet`;
+
+  if (!liste.length) {
+    document.getElementById('gram-grid').innerHTML = `
+      <div class="ingen-treff" style="grid-column:1/-1;">
+        <div class="stor-ikon">🔍</div>
+        <p>Ingen grammatikkemner matcher søket ditt.</p>
+      </div>`;
+    return;
+  }
+
+  document.getElementById('gram-grid').innerHTML = liste.map(g => `
+    <div class="gram-kort">
+      <div class="gram-kort-top">
+        <div class="gram-emne">${g.emne}</div>
+        <span class="gram-kap-badge" style="background:#${g.kapFarge}22;color:#${g.kapFarge};">Kap. ${g.kapId}</span>
+      </div>
+      <div class="gram-divider"></div>
+      <div class="gram-kort-bunn">
+        <span class="gram-kaptittel">📚 ${g.kapTittel}</span>
+        <a class="gram-btn" href="/kapittel/${g.kapId}">Gå til kapittel →</a>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filtrerGram() {
+  const q = document.getElementById('sok-input').value.toLowerCase().trim();
+  if (!q) return visGram(alleGram);
+  const filtert = alleGram.filter(g =>
+    g.emne.toLowerCase().includes(q) || g.kapTittel.toLowerCase().includes(q)
+  );
+  visGram(filtert);
+}
+
+lastGram();
+</script>
+</body>
+</html>
