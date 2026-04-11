@@ -12,12 +12,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(session({
+ app.use(session({
   secret: process.env.SESSION_SECRET || "norsk-a1-portal-secret",
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: process.env.NODE_ENV === "production",
-    maxAge: 8 * 60 * 60 * 1000  // 8 timer
+    secure: false,
+    sameSite: "lax",
+    maxAge: 8 * 60 * 60 * 1000
   }
 }));
 
