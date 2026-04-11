@@ -28,9 +28,19 @@ function requireAuth(req, res, next) {
 }
 
 // ── DATA ─────────────────────────────────────────────
-const kapitler = JSON.parse(
-  fs.readFileSync(path.join(__dirname, "data/kapitler.json"), "utf8")
-);
+// ── DATA ─────────────────────────────────────────────
+let kapitler = [];
+try {
+  const dataPath = path.join(__dirname, "data/kapitler.json");
+  kapitler = JSON.parse(fs.readFileSync(dataPath, "utf8"));
+} catch (e) {
+  try {
+    const dataPath2 = path.join(process.cwd(), "data/kapitler.json");
+    kapitler = JSON.parse(fs.readFileSync(dataPath2, "utf8"));
+  } catch (e2) {
+    console.error("Kunne ikke laste kapitler.json:", e2.message);
+  }
+}
 
 // ── ROUTES: AUTH ──────────────────────────────────────
 app.get("/login", (req, res) => {
