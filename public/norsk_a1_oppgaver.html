@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Norsk A1 – Digitale oppgaver</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
 <style>
   :root {
     --navy: #1B3A5C;
@@ -32,9 +32,11 @@
     font-family: 'DM Sans', sans-serif;
     background: var(--cream);
     color: var(--text);
-    font-size: 17px;
+    font-size: 16px;
     line-height: 1.65;
     min-height: 100vh;
+    font-stretch: normal;
+    -webkit-font-smoothing: antialiased;
   }
 
   /* ── HEADER ── */
@@ -57,25 +59,52 @@
     height: 64px;
   }
   .header-logo {
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: 1.3rem;
-    letter-spacing: -0.02em;
-    color: white;
+    display: flex;
+    align-items: center;
     text-decoration: none;
+    flex-shrink: 0;
   }
-  .header-logo span { color: var(--sky); }
+  .header-logo img {
+    height: 36px;
+    width: auto;
+    display: block;
+  }
   .header-badge {
+    background: rgba(255,255,255,0.15);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.25);
+  }
+  .header-spacer { flex: 1; }
+  .header-back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: white;
+    color: var(--navy);
+    border: none;
+    border-radius: 10px;
+    padding: 9px 20px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.18s;
+    letter-spacing: 0.01em;
+  }
+  .header-back-btn:hover {
     background: var(--sky);
     color: white;
-    font-size: 0.72rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    padding: 3px 10px;
-    border-radius: 20px;
-    margin-left: auto;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
   }
+  .header-back-btn .btn-arrow { font-size: 1rem; }
 
   /* ── HERO ── */
   .hero {
@@ -99,10 +128,10 @@
   }
   .hero h1 {
     font-family: 'Syne', sans-serif;
-    font-size: clamp(2rem, 5vw, 3rem);
+    font-size: 2.4rem;
     font-weight: 800;
-    letter-spacing: -0.03em;
-    line-height: 1.1;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
     margin-bottom: 12px;
   }
   .hero-sub {
@@ -154,7 +183,7 @@
     border: none;
     background: none;
     font-family: 'DM Sans', sans-serif;
-    font-size: 0.88rem;
+    font-size: 0.9rem;
     font-weight: 500;
     color: var(--muted);
     cursor: pointer;
@@ -162,6 +191,8 @@
     margin-bottom: -2px;
     white-space: nowrap;
     transition: color 0.2s, border-color 0.2s;
+    letter-spacing: 0;
+    font-stretch: normal;
   }
   .tab-btn .tab-icon { font-size: 1.1rem; }
   .tab-btn:hover { color: var(--blue); }
@@ -206,11 +237,11 @@
     flex-shrink: 0;
   }
   .ex-card-header h2 {
-    font-family: 'Syne', sans-serif;
-    font-size: 1.15rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1.1rem;
     font-weight: 700;
-    letter-spacing: -0.02em;
-    line-height: 1.2;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
   }
   .ex-card-header p {
     font-size: 0.88rem;
@@ -786,9 +817,13 @@
   @media (max-width: 640px) {
     .match-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
     .ex-card-body { padding: 20px 16px; }
-    .hero { padding: 40px 16px 36px; }
-    .tab-btn { padding: 12px 12px 10px; font-size: 0.82rem; }
+    .hero { padding: 36px 16px 32px; }
+    .hero h1 { font-size: 1.8rem; }
+    .tab-btn { padding: 12px 10px 10px; font-size: 0.8rem; }
     .tab-btn .tab-icon { display: none; }
+    .header-badge { display: none; }
+    .header-back-btn { padding: 8px 14px; font-size: 0.82rem; }
+    .header-logo img { height: 28px; }
   }
 
   /* ── UTILITIES ── */
@@ -803,8 +838,14 @@
 <!-- ── HEADER ── -->
 <header class="site-header" role="banner">
   <div class="header-inner">
-    <a href="#" class="header-logo">Norsk<span>A1</span></a>
+    <a href="/" class="header-logo" aria-label="MOVED – Tilbake til portalen">
+      <img src="/assets/logo_moved.png" alt="MOVED Molde Voksenopplæring">
+    </a>
     <span class="header-badge">Digitale oppgaver</span>
+    <div class="header-spacer"></div>
+    <a href="/" class="header-back-btn" aria-label="Gå tilbake til Hovedmeny">
+      <span class="btn-arrow">←</span> Hovedmeny
+    </a>
   </div>
 </header>
 
