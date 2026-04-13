@@ -11,8 +11,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 
-// ── AUTH MIDDLEWARE ───────────────────────────────────
-// Cookie-basert auth – fungerer på Vercel serverless
+// ── AUTH ──────────────────────────────────────────────
 function requireAuth(req, res, next) {
   const cookie = req.headers.cookie || "";
   if (cookie.includes("auth=ok")) return next();
@@ -22,21 +21,34 @@ function requireAuth(req, res, next) {
 // ── DATA ─────────────────────────────────────────────
 let kapitler = [];
 try {
-  const dataPath = path.join(__dirname, "data/kapitler.json");
-  kapitler = JSON.parse(fs.readFileSync(dataPath, "utf8"));
+  kapitler = JSON.parse(fs.readFileSync(path.join(__dirname, "data/kapitler.json"), "utf8"));
 } catch (e) {
   try {
-    const dataPath2 = path.join(process.cwd(), "data/kapitler.json");
-    kapitler = JSON.parse(fs.readFileSync(dataPath2, "utf8"));
-  } catch (e2) {
-    console.error("Kunne ikke laste kapitler.json:", e2.message);
-  }
+    kapitler = JSON.parse(fs.readFileSync(path.join(process.cwd(), "data/kapitler.json"), "utf8"));
+  } catch (e2) { console.error("Feil: kapitler.json", e2.message); }
+}
+
+let orddata = {};
+try {
+  orddata = JSON.parse(fs.readFileSync(path.join(__dirname, "data/orddata.json"), "utf8"));
+} catch (e) {
+  try {
+    orddata = JSON.parse(fs.readFileSync(path.join(process.cwd(), "data/orddata.json"), "utf8"));
+  } catch (e2) { console.error("Feil: orddata.json", e2.message); }
+}
+
+// ── HJELPEFUNKSJON: Berik ordliste ───────────────────
+function berikOrdliste(ordliste) {
+  return ordliste.map(ord => {
+    const data = orddata[ord.toLowerCase()] || orddata[ord] || null;
+    if (!data) return { ord, display: ord, klasse: "ukjent", bøyning: "" };
+    return { ord, display: data.display, klasse: data.klasse, bøyning: data.bøyning };
+  });
 }
 
 // ── ROUTES: AUTH ──────────────────────────────────────
 app.get("/login", (req, res) => {
-  const cookie = req.headers.cookie || "";
-  if (cookie.includes("auth=ok")) return res.redirect("/");
+  if ((req.headers.cookie || "").includes("auth=ok")) return res.redirect("/");
   res.sendFile(path.join(__dirname, "public/login.html"));
 });
 
@@ -56,37 +68,25 @@ app.get("/logg-ut", (req, res) => {
 });
 
 // ── ROUTES: SIDER ────────────────────────────────────
-app.get("/", requireAuth, (req, res) => {
-  res.sendFile(path.join(__dirname, "public/index.html"));
-});
-
-app.get("/kapittel/:id", requireAuth, (req, res) => {
-  res.sendFile(path.join(__dirname, "public/kapittel.html"));
-});
-
-app.get("/grammatikk", requireAuth, (req, res) => {
-  res.sendFile(path.join(__dirname, "public/grammatikk.html"));
-});
+app.get("/", requireAuth, (req, res) => res.sendFile(path.join(__dirname, "public/index.html")));
+app.get("/kapittel/:id", requireAuth, (req, res) => res.sendFile(path.join(__dirname, "public/kapittel.html")));
+app.get("/grammatikk", requireAuth, (req, res) => res.sendFile(path.join(__dirname, "public/grammatikk.html")));
 
 // ── API: KAPITLER ─────────────────────────────────────
-app.get("/api/kapitler", requireAuth, (req, res) => {
-  res.json(kapitler);
-});
+app.get("/api/kapitler", requireAuth, (req, res) => res.json(kapitler));
 
 app.get("/api/kapitler/:id", requireAuth, (req, res) => {
   const kap = kapitler.find(k => k.id === parseInt(req.params.id));
   if (!kap) return res.status(404).json({ error: "Kapittel ikke funnet" });
-  res.json(kap);
+  // Berik ordlisten med grammatikkdata
+  const beriketKap = { ...kap, ordlisteBeriket: berikOrdliste(kap.ordliste) };
+  res.json(beriketKap);
 });
 
-// ── API: GENERER INNHOLD ──────────────────────────────
+// ── API: GENERER INNHOLD (streaming) ─────────────────
 app.post("/api/generer", requireAuth, async (req, res) => {
   const { kapittelId, leksjon, type, yrke, nivaa = "A1" } = req.body;
-
-  if (!kapittelId || !type) {
-    return res.status(400).json({ error: "Mangler kapittelId eller type" });
-  }
-
+  if (!kapittelId || !type) return res.status(400).json({ error: "Mangler kapittelId eller type" });
   const kap = kapitler.find(k => k.id === parseInt(kapittelId));
   if (!kap) return res.status(404).json({ error: "Kapittel ikke funnet" });
 
@@ -94,7 +94,6 @@ app.post("/api/generer", requireAuth, async (req, res) => {
     const { GoogleGenerativeAI } = require("@google/generative-ai");
     const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
-
     const prompt = byggPrompt({ kap, leksjon, type, yrke, nivaa });
 
     res.setHeader("Content-Type", "text/plain; charset=utf-8");
@@ -102,18 +101,32 @@ app.post("/api/generer", requireAuth, async (req, res) => {
     res.setHeader("X-Accel-Buffering", "no");
 
     const streamResult = await model.generateContentStream(prompt);
-
     for await (const chunk of streamResult.stream) {
       const text = chunk.text();
       if (text) res.write(text);
     }
     res.end();
-
   } catch (err) {
     console.error("Gemini feil:", err.message);
-    if (!res.headersSent) {
-      res.status(500).json({ error: "Generering feilet. Prøv igjen." });
-    }
+    if (!res.headersSent) res.status(500).json({ error: "Generering feilet. Prøv igjen." });
+  }
+});
+
+// ── API: GENERER WORD (.docx) ────────────────────────
+app.post("/api/generer-docx", requireAuth, async (req, res) => {
+  const { kapittelId, innhold, type } = req.body;
+  const kap = kapitler.find(k => k.id === parseInt(kapittelId));
+  if (!kap) return res.status(404).json({ error: "Kapittel ikke funnet" });
+
+  try {
+    const docxBuffer = await genererDOCX({ kap, innhold, type });
+    const filnavn = `kap${kap.id}_${kap.tittel.replace(/\s+/g, "_").toLowerCase()}.docx`;
+    res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+    res.setHeader("Content-Disposition", `attachment; filename="${filnavn}"`);
+    res.send(docxBuffer);
+  } catch (err) {
+    console.error("DOCX feil:", err.message);
+    res.status(500).json({ error: "Word-generering feilet: " + err.message });
   }
 });
 
@@ -136,18 +149,14 @@ app.post("/api/generer-pptx", requireAuth, async (req, res) => {
 });
 
 // ── API: HELSE ───────────────────────────────────────
-app.get("/api/helse", (req, res) => {
-  res.json({ status: "ok", timestamp: new Date().toISOString() });
-});
+app.get("/api/helse", (req, res) => res.json({ status: "ok", timestamp: new Date().toISOString() }));
 
-// ── PROMPT-BYGGER ────────────────────────────────────
+// ── PROMPT-BYGGER ─────────────────────────────────────
 function byggPrompt({ kap, leksjon, type, yrke, nivaa }) {
   const leksjonTekst = leksjon
     ? `Leksjon ${leksjon}: ${kap.leksjoner.find(l => l.id === leksjon)?.tittel || leksjon}`
     : `Hele kapittelet: ${kap.tittel}`;
-
   const yrkeTekst = yrke ? `\nElevenes yrkesbakgrunn: ${yrke}` : "";
-
   const typeInstruksjon = {
     lesetekst: `Lag en kort lesetekst (maks 80 ord) om temaet. Bruk enkle setninger (maks 7 ord). Inkluder 5 leseforståelsesspørsmål (a–e) etterpå. Teksten skal handle om en voksen person i en realistisk hverdagssituasjon – IKKE barnetema.`,
     arbeidsark: `Lag et komplett arbeidsark med: 1) Læringsmål (2–3 punkter med «Etter denne timen kan jeg...»), 2) Ordliste med 8 nøkkelord og forklaring på enkel norsk, 3) Fem varierte oppgaver (a–e): fyll inn, sant/usant, koble par, skriv setning, muntlig øvelse. Aldersadekvat innhold for voksne.`,
@@ -180,12 +189,280 @@ ${typeInstruksjon}
 Svar direkte med innholdet – ingen forklaring eller metakommentar.`;
 }
 
+// ── WORD-GENERERING (.docx) ──────────────────────────
+async function genererDOCX({ kap, innhold, type }) {
+  const {
+    Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell,
+    AlignmentType, HeadingLevel, BorderStyle, WidthType, ShadingType,
+    LevelFormat, VerticalAlign
+  } = require("docx");
+
+  const NAVY = "1B3A5C";
+  const GOLD = "C9960C";
+  const LIGHT_BLUE = "D6E4F0";
+  const LIGHT_GREEN = "EAF4EA";
+  const LIGHT_YELLOW = "FFF3CD";
+  const LIGHT_GREY = "F5F5F5";
+  const WHITE = "FFFFFF";
+
+  const border = { style: BorderStyle.SINGLE, size: 1, color: "CCCCCC" };
+  const borders = { top: border, bottom: border, left: border, right: border };
+  const noBorder = { style: BorderStyle.NONE, size: 0, color: "FFFFFF" };
+  const noBorders = { top: noBorder, bottom: noBorder, left: noBorder, right: noBorder };
+
+  // Berik ordlisten
+  const beriketOrd = berikOrdliste(kap.ordliste);
+
+  // ── TOPPTEKST-TABELL ──
+  const topptekst = new Table({
+    width: { size: 9026, type: WidthType.DXA },
+    columnWidths: [9026],
+    rows: [
+      new TableRow({
+        children: [
+          new TableCell({
+            borders: noBorders,
+            shading: { fill: NAVY, type: ShadingType.CLEAR },
+            margins: { top: 160, bottom: 160, left: 200, right: 200 },
+            width: { size: 9026, type: WidthType.DXA },
+            children: [
+              new Paragraph({
+                children: [new TextRun({ text: "Molde voksenopplæringssenter – MBO", color: WHITE, bold: true, size: 26, font: "Arial" })],
+              }),
+              new Paragraph({
+                children: [new TextRun({ text: `Tema: ${kap.tittel}   |   Nivå: A1`, color: WHITE, size: 22, font: "Arial" })],
+              }),
+              new Paragraph({
+                children: [
+                  new TextRun({ text: "Navn: ________________________________   ", color: WHITE, size: 22, font: "Arial" }),
+                  new TextRun({ text: "Dato: ____________", color: WHITE, size: 22, font: "Arial" }),
+                ],
+              }),
+            ],
+          }),
+        ],
+      }),
+    ],
+  });
+
+  // ── LÆRINGSMÅL-SEKSJON ──
+  const laringsmaalHeader = new Paragraph({
+    children: [new TextRun({ text: "🎯 Læringsmål", bold: true, size: 26, font: "Arial", color: NAVY })],
+    spacing: { before: 240, after: 80 },
+    border: { bottom: { style: BorderStyle.SINGLE, size: 6, color: GOLD, space: 1 } },
+  });
+
+  const laringsmaalBoks = new Table({
+    width: { size: 9026, type: WidthType.DXA },
+    columnWidths: [9026],
+    rows: [new TableRow({
+      children: [new TableCell({
+        borders: noBorders,
+        shading: { fill: LIGHT_BLUE, type: ShadingType.CLEAR },
+        margins: { top: 120, bottom: 120, left: 180, right: 180 },
+        width: { size: 9026, type: WidthType.DXA },
+        children: [
+          new Paragraph({ children: [new TextRun({ text: "Etter denne timen kan jeg:", bold: true, size: 22, font: "Arial", color: NAVY })], spacing: { after: 80 } }),
+          new Paragraph({ children: [new TextRun({ text: "✓  hilse og presentere meg på norsk", size: 22, font: "Arial" })], spacing: { after: 40 } }),
+          new Paragraph({ children: [new TextRun({ text: "✓  si hvor jeg kommer fra og hvor jeg bor", size: 22, font: "Arial" })], spacing: { after: 40 } }),
+          new Paragraph({ children: [new TextRun({ text: `✓  bruke nøkkelord fra kapittelet: ${kap.tittel}`, size: 22, font: "Arial" })], spacing: { after: 40 } }),
+        ],
+      })],
+    })],
+  });
+
+  // ── ORDLISTE-SEKSJON ──
+  const ordlisteHeader = new Paragraph({
+    children: [new TextRun({ text: "📝 Ordliste", bold: true, size: 26, font: "Arial", color: NAVY })],
+    spacing: { before: 280, after: 80 },
+    border: { bottom: { style: BorderStyle.SINGLE, size: 6, color: GOLD, space: 1 } },
+  });
+
+  // Tabell med ordliste: display | bøyning | egne notater
+  const ordlisteHeader2 = new TableRow({
+    tableHeader: true,
+    children: [
+      new TableCell({
+        borders, shading: { fill: NAVY, type: ShadingType.CLEAR },
+        margins: { top: 80, bottom: 80, left: 120, right: 120 },
+        width: { size: 2800, type: WidthType.DXA },
+        children: [new Paragraph({ children: [new TextRun({ text: "Ord", bold: true, color: WHITE, size: 20, font: "Arial" })] })],
+      }),
+      new TableCell({
+        borders, shading: { fill: NAVY, type: ShadingType.CLEAR },
+        margins: { top: 80, bottom: 80, left: 120, right: 120 },
+        width: { size: 3626, type: WidthType.DXA },
+        children: [new Paragraph({ children: [new TextRun({ text: "Bøyning", bold: true, color: WHITE, size: 20, font: "Arial" })] })],
+      }),
+      new TableCell({
+        borders, shading: { fill: NAVY, type: ShadingType.CLEAR },
+        margins: { top: 80, bottom: 80, left: 120, right: 120 },
+        width: { size: 2600, type: WidthType.DXA },
+        children: [new Paragraph({ children: [new TextRun({ text: "Mine notater", bold: true, color: WHITE, size: 20, font: "Arial" })] })],
+      }),
+    ],
+  });
+
+  const ordlisteRader = beriketOrd.map((o, idx) => new TableRow({
+    children: [
+      new TableCell({
+        borders,
+        shading: { fill: idx % 2 === 0 ? LIGHT_GREEN : WHITE, type: ShadingType.CLEAR },
+        margins: { top: 80, bottom: 80, left: 120, right: 120 },
+        width: { size: 2800, type: WidthType.DXA },
+        children: [new Paragraph({ children: [new TextRun({ text: o.display, bold: true, size: 20, font: "Arial", color: NAVY })] })],
+      }),
+      new TableCell({
+        borders,
+        shading: { fill: idx % 2 === 0 ? LIGHT_GREEN : WHITE, type: ShadingType.CLEAR },
+        margins: { top: 80, bottom: 80, left: 120, right: 120 },
+        width: { size: 3626, type: WidthType.DXA },
+        children: [new Paragraph({ children: [new TextRun({ text: o.bøyning || "–", size: 20, font: "Arial", italics: true, color: "444444" })] })],
+      }),
+      new TableCell({
+        borders,
+        shading: { fill: idx % 2 === 0 ? LIGHT_GREEN : WHITE, type: ShadingType.CLEAR },
+        margins: { top: 80, bottom: 80, left: 120, right: 120 },
+        width: { size: 2600, type: WidthType.DXA },
+        children: [new Paragraph({ children: [new TextRun({ text: "", size: 20, font: "Arial" })] })],
+      }),
+    ],
+  }));
+
+  const ordliste = new Table({
+    width: { size: 9026, type: WidthType.DXA },
+    columnWidths: [2800, 3626, 2600],
+    rows: [ordlisteHeader2, ...ordlisteRader],
+  });
+
+  // ── INNHOLD FRA AI ──
+  const innholdHeader = new Paragraph({
+    children: [new TextRun({ text: "✏️ Oppgaver", bold: true, size: 26, font: "Arial", color: NAVY })],
+    spacing: { before: 280, after: 80 },
+    border: { bottom: { style: BorderStyle.SINGLE, size: 6, color: GOLD, space: 1 } },
+  });
+
+  // Parse innholdet linje for linje
+  const innholdLinjer = (innhold || "Innhold ikke generert ennå. Generer tekst i portalen og last ned på nytt.")
+    .split("\n")
+    .filter(l => l.trim());
+
+  const innholdParagrafer = innholdLinjer.map(linje => {
+    const erOverskrift = /^#{1,3}\s/.test(linje) || /^[A-ZÆØÅ].*:$/.test(linje.trim());
+    const erOppgave = /^[a-e][.)]\s/.test(linje.trim()) || /^\d+[.)]\s/.test(linje.trim());
+    const renLinje = linje.replace(/^#{1,3}\s*/, "").trim();
+
+    if (erOverskrift) {
+      return new Paragraph({
+        children: [new TextRun({ text: renLinje, bold: true, size: 24, font: "Arial", color: NAVY })],
+        spacing: { before: 160, after: 60 },
+      });
+    }
+    if (erOppgave) {
+      return new Paragraph({
+        children: [new TextRun({ text: renLinje, size: 22, font: "Arial" })],
+        spacing: { before: 80, after: 80 },
+        indent: { left: 360 },
+      });
+    }
+    return new Paragraph({
+      children: [new TextRun({ text: renLinje, size: 22, font: "Arial" })],
+      spacing: { before: 60, after: 60 },
+    });
+  });
+
+  // ── MUNTLIG ØVELSE ──
+  const muntligHeader = new Paragraph({
+    children: [new TextRun({ text: "🗣️ Muntlig øvelse", bold: true, size: 26, font: "Arial", color: NAVY })],
+    spacing: { before: 280, after: 80 },
+    border: { bottom: { style: BorderStyle.SINGLE, size: 6, color: GOLD, space: 1 } },
+  });
+
+  const muntligBoks = new Table({
+    width: { size: 9026, type: WidthType.DXA },
+    columnWidths: [9026],
+    rows: [new TableRow({
+      children: [new TableCell({
+        borders: noBorders,
+        shading: { fill: LIGHT_YELLOW, type: ShadingType.CLEAR },
+        margins: { top: 120, bottom: 120, left: 180, right: 180 },
+        width: { size: 9026, type: WidthType.DXA },
+        children: [
+          new Paragraph({ children: [new TextRun({ text: "🗣️  Snakk med en makker (par)", bold: true, size: 22, font: "Arial" })], spacing: { after: 80 } }),
+          new Paragraph({ children: [new TextRun({ text: `A: Hva heter du?   B: Jeg heter ___.`, size: 22, font: "Arial" })], spacing: { after: 60 } }),
+          new Paragraph({ children: [new TextRun({ text: `A: Hvor kommer du fra?   B: Jeg kommer fra ___.`, size: 22, font: "Arial" })], spacing: { after: 60 } }),
+          new Paragraph({ children: [new TextRun({ text: `A: Hvor bor du nå?   B: Jeg bor i ___.`, size: 22, font: "Arial" })], spacing: { after: 40 } }),
+        ],
+      })],
+    })],
+  });
+
+  // ── FASIT ──
+  const fasitDivider = new Paragraph({
+    children: [new TextRun({ text: "─────────────────────────────────────────────────────────", size: 18, color: "AAAAAA", font: "Arial" })],
+    spacing: { before: 400, after: 80 },
+  });
+
+  const fasitHeader = new Paragraph({
+    children: [new TextRun({ text: "FASIT", bold: true, size: 26, font: "Arial", color: "666666" })],
+    spacing: { before: 80, after: 80 },
+  });
+
+  const fasitBoks = new Table({
+    width: { size: 9026, type: WidthType.DXA },
+    columnWidths: [9026],
+    rows: [new TableRow({
+      children: [new TableCell({
+        borders: noBorders,
+        shading: { fill: LIGHT_GREY, type: ShadingType.CLEAR },
+        margins: { top: 120, bottom: 120, left: 180, right: 180 },
+        width: { size: 9026, type: WidthType.DXA },
+        children: [
+          new Paragraph({ children: [new TextRun({ text: "Fasit legges inn av læreren. Se generert innhold ovenfor.", size: 20, italics: true, font: "Arial", color: "666666" })] }),
+        ],
+      })],
+    })],
+  });
+
+  // ── BYGG DOKUMENT ──
+  const doc = new Document({
+    styles: {
+      default: { document: { run: { font: "Arial", size: 22 } } },
+    },
+    sections: [{
+      properties: {
+        page: {
+          size: { width: 11906, height: 16838 }, // A4
+          margin: { top: 1440, right: 1440, bottom: 1440, left: 1440 },
+        },
+      },
+      children: [
+        topptekst,
+        new Paragraph({ children: [], spacing: { after: 120 } }),
+        laringsmaalHeader,
+        laringsmaalBoks,
+        new Paragraph({ children: [], spacing: { after: 80 } }),
+        ordlisteHeader,
+        ordliste,
+        new Paragraph({ children: [], spacing: { after: 80 } }),
+        innholdHeader,
+        ...innholdParagrafer,
+        new Paragraph({ children: [], spacing: { after: 80 } }),
+        muntligHeader,
+        muntligBoks,
+        fasitDivider,
+        fasitHeader,
+        fasitBoks,
+      ],
+    }],
+  });
+
+  return await Packer.toBuffer(doc);
+}
+
 // ── PPTX-GENERERING ──────────────────────────────────
 async function genererPPTX({ kap, tittel, innhold, grammatikk, oppgaver }) {
   const pptxgen = require("pptxgenjs");
-  const fs = require("fs");
-  const path = require("path");
-
   const pres = new pptxgen();
   pres.layout = "LAYOUT_16x9";
 
@@ -298,8 +575,7 @@ async function genererPPTX({ kap, tittel, innhold, grammatikk, oppgaver }) {
   });
   addFooter(s5);
 
-  const buf = await pres.write({ outputType: "nodebuffer" });
-  return buf;
+  return await pres.write({ outputType: "nodebuffer" });
 }
 
 // ── START ────────────────────────────────────────────
