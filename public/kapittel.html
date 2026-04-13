@@ -200,6 +200,8 @@ body{
 .fill-input{border:none;border-bottom:2px solid var(--navy);background:transparent;font-family:'DM Sans',sans-serif;font-size:.88rem;padding:1px 5px;min-width:75px;text-align:center;outline:none;color:var(--navy);font-weight:600;}
 .fill-input.correct{border-color:var(--success);color:var(--success);}
 .fill-input.wrong{border-color:var(--error);color:var(--error);}
+.fill-input.nesten{border-color:#E8A020;color:#8A5000;}
+.feedback.warn{background:#FFF3CD;color:#856404;border:1.5px solid #FFD700;display:flex;align-items:center;gap:7px;}
 .fill-hint{font-size:.72rem;color:var(--muted);font-style:italic;margin-left:4px;}
 
 /* Sorter */
@@ -315,6 +317,11 @@ body{
       <div class="kap-tittel" id="kap-tittel">Kapittel</div>
     </div>
     <div class="kap-chips" id="kap-chips"></div>
+    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+      <span id="prog-status" style="font-size:.72rem;font-weight:700;"></span>
+      <button class="kap-chip" onclick="settProgresjon('gjennomgaatt')" style="cursor:pointer;background:rgba(46,158,107,.25);border-color:rgba(46,158,107,.4);">✓ Gjennomgått</button>
+      <button class="kap-chip" onclick="settProgresjon('arbeid')" style="cursor:pointer;background:rgba(201,150,12,.2);border-color:rgba(201,150,12,.35);">⟳ Under arbeid</button>
+    </div>
   </div>
 </section>
 
@@ -378,6 +385,12 @@ body{
   <!-- OPPGAVEPANEL -->
   <section class="panel-oppg">
 
+    <!-- Læringsmål-boks -->
+    <div id="laeringsmaal-boks" style="display:none;background:#EEF4FF;border-bottom:1px solid #B0C4F0;padding:10px 16px;">
+      <div style="font-size:.68rem;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;">🎯 Læringsmål for denne leksjonen</div>
+      <div id="laeringsmaal-liste" style="display:flex;flex-direction:column;gap:4px;"></div>
+    </div>
+
     <!-- Generert tekst – alltid synlig -->
     <div class="tekst-boks" id="tekst-boks">
       <div class="tekst-header" onclick="toggleTekst()">
@@ -390,7 +403,14 @@ body{
           <span class="lock-icon">🔒</span>
           <span>Generer innhold i panelet til venstre for å se leseteksten her.</span>
         </div>
-        <div class="tekst-body" id="tekst-body" style="display:none;"></div>
+        <div id="tekst-body-wrap" style="display:none;">
+          <div class="tekst-body" id="tekst-body"></div>
+          <div style="padding:8px 14px 10px;display:flex;gap:7px;align-items:center;border-top:1px solid var(--border);background:white;">
+            <button class="btn btn-primary btn-sm" id="les-btn" onclick="lesTekstHoyt()">🔊 Les teksten høyt</button>
+            <button class="btn btn-secondary btn-sm" id="stopp-btn" onclick="stoppLesing()" style="display:none;">⏹ Stopp</button>
+            <span style="font-size:.72rem;color:var(--muted);margin-left:4px;">Norsk tekst-til-tale</span>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -593,6 +613,9 @@ function renderInfo() {
   }));
 
   document.getElementById('velg-yrke').placeholder = `F.eks. ${kapData.yrke}...`;
+
+  // Vis progresjonsstatus for dette kapittelet
+  oppdaterProgresjonsUI();
 }
 
 function velgLeks(id,el) {
@@ -697,9 +720,21 @@ function aktiverOppgaver(data) {
   document.getElementById('preview-content').textContent = data.lesetekst;
   ['pptx-btn','docx-btn','kopier-btn'].forEach(id => document.getElementById(id).style.display='inline-flex');
 
+  // Vis læringsmål
+  if (data.laringsmaal && data.laringsmaal.length) {
+    const boks = document.getElementById('laeringsmaal-boks');
+    const liste = document.getElementById('laeringsmaal-liste');
+    liste.innerHTML = data.laringsmaal.map(m =>
+      `<div style="display:flex;align-items:flex-start;gap:6px;font-size:.8rem;color:var(--navy);">
+        <span style="color:var(--success);font-weight:700;flex-shrink:0;">✓</span>
+        <span>${m}</span>
+      </div>`).join('');
+    boks.style.display = 'block';
+  }
+
   // Oppdater tekst-boksen i oppgavepanelet
   document.getElementById('tekst-locked').style.display = 'none';
-  document.getElementById('tekst-body').style.display = 'block';
+  document.getElementById('tekst-body-wrap').style.display = 'block';
   document.getElementById('tekst-body').textContent = data.lesetekst;
   document.getElementById('tekst-badge').textContent = '✓ KLAR';
   document.getElementById('tekst-badge').style.background = 'var(--success)';
@@ -733,8 +768,8 @@ function aktiverOppgaver(data) {
   matchSel = null; matchOk = 0;
   buildMatch();
   buildDiktat();
-  // Flashkort fra kapitlets nøkkelord (allerede satt i renderInfo)
-  fcIdx = 0; fcFlipped = false; fcKan = 0; fcOv = 0;
+  // Flashkort med SRS – initialisert fra ordlisten
+  initSRS();
   updateFC();
 
   visToast('✅ Tekst og oppgaver klare! Bruk fanene til høyre →');
@@ -763,7 +798,7 @@ async function genererDOCX() {
   const tekst = genDataGlobal ? genDataGlobal.lesetekst : '';
   try {
     const r = await fetch('/api/generer-docx', { method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ kapittelId: kapData.id, innhold: tekst, type: valgtType }) });
+      body: JSON.stringify({ kapittelId: kapData.id, innhold: tekst, type: valgtType, genData: genDataGlobal }) });
     if (!r.ok) throw new Error();
     const blob = await r.blob(), a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
@@ -835,13 +870,20 @@ function buildFill() {
     <div class="fill-item">${f.before}<input class="fill-input" id="fi-${i}" type="text" placeholder="___" autocomplete="off">${f.after}<span class="fill-hint">${f.hint}</span></div>`).join('');
 }
 function checkFill() {
-  let ok=0;
+  let ok=0, nesten=0;
   fillData.forEach((f,i)=>{
-    const inp=document.getElementById('fi-'+i), v=inp.value.trim().toLowerCase();
-    if(v===f.answer.toLowerCase()){inp.classList.add('correct');inp.classList.remove('wrong');ok++;}
-    else{inp.classList.add('wrong');inp.classList.remove('correct');}
+    const inp=document.getElementById('fi-'+i);
+    inp.classList.remove('correct','wrong','nesten');
+    const v=inp.value.trim().toLowerCase();
+    const riktig=f.answer.toLowerCase();
+    if(v===riktig){inp.classList.add('correct');ok++;}
+    else if(levenshtein(v,riktig)<=2 && v.length>0){inp.classList.add('nesten');nesten++;}
+    else{inp.classList.add('wrong');}
   });
-  showFB(document.getElementById('fill-fb'),ok===fillData.length,ok===fillData.length?`Alle ${fillData.length} riktige! 🎉`:`${ok}/${fillData.length} riktige.`);
+  const fb=document.getElementById('fill-fb');
+  if(ok===fillData.length) showFB(fb,true,`Alle ${fillData.length} riktige! 🎉`);
+  else if(nesten>0) showFB(fb,false,`${ok}/${fillData.length} riktige – ${nesten} nesten riktig. Sjekk stavingen! 💡`,true);
+  else showFB(fb,false,`${ok}/${fillData.length} riktige. Se de røde feltene.`);
 }
 function resetFill() {
   fillData.forEach((_,i)=>{const inp=document.getElementById('fi-'+i);inp.value='';inp.classList.remove('correct','wrong');});
@@ -940,25 +982,56 @@ function velgM(el) {
 }
 function resetMatch(){buildMatch();}
 
-// ── FLASHKORT ────────────────────────────────
+// ── FLASHKORT MED SPACED REPETITION ─────────
+// SRS: «Ja» → flyttes bakerst, «Nei» → settes inn 3 kort frem
+let srsKort = []; // kopi av flashData med SRS-metadata
+
+function initSRS() {
+  srsKort = flashData.map((f,i) => ({...f, idx:i, intervall:3, neste:0}));
+  fcIdx = 0; fcFlipped = false; fcKan = 0; fcOv = 0;
+}
+
 function updateFC() {
-  if (!flashData.length) return;
-  const f = flashData[fcIdx];
+  const liste = srsKort.length ? srsKort : flashData;
+  if (!liste.length) return;
+  if(fcIdx >= liste.length) fcIdx = 0;
+  const f = liste[fcIdx];
   document.getElementById('fc-front-txt').textContent = f.front;
   document.getElementById('fc-ctx').textContent = f.ctx || '';
   document.getElementById('fc-back-txt').textContent = f.back;
   document.getElementById('fc-ex').textContent = f.ex || '';
-  document.getElementById('fc-cnt').textContent = (fcIdx+1)+' / '+flashData.length;
+  document.getElementById('fc-cnt').textContent = (fcIdx+1)+' / '+liste.length;
   document.getElementById('fc-card').classList.remove('flipped');
   fcFlipped = false;
 }
 function flipCard(){fcFlipped=!fcFlipped;document.getElementById('fc-card').classList.toggle('flipped',fcFlipped);}
-function nextCard(){fcIdx=(fcIdx+1)%flashData.length;updateFC();}
-function prevCard(){fcIdx=(fcIdx-1+flashData.length)%flashData.length;updateFC();}
+function nextCard(){const liste=srsKort.length?srsKort:flashData;fcIdx=(fcIdx+1)%liste.length;updateFC();}
+function prevCard(){const liste=srsKort.length?srsKort:flashData;fcIdx=(fcIdx-1+liste.length)%liste.length;updateFC();}
 function markCard(v){
-  if(v==='ja')fcKan++;else fcOv++;
-  document.getElementById('fc-stats').textContent=`Kan: ${fcKan} \u00a0|\u00a0 Øv mer: ${fcOv}`;
-  nextCard();
+  if(!srsKort.length){ nextCard(); return; }
+  const kort = srsKort[fcIdx];
+  if(v==='ja'){
+    fcKan++;
+    // Flytt bakerst med økt intervall
+    srsKort.splice(fcIdx,1);
+    const nyPos = Math.min(srsKort.length, fcIdx + Math.min(kort.intervall, srsKort.length));
+    kort.intervall = Math.min(kort.intervall * 2, srsKort.length);
+    srsKort.splice(nyPos, 0, kort);
+    // Vis kort grønn animasjon
+    document.getElementById('fc-card').style.transition='transform .2s';
+  } else {
+    fcOv++;
+    // Flytt inn 3 posisjoner frem (øv mer snart)
+    srsKort.splice(fcIdx,1);
+    const nyPos = Math.min(fcIdx+3, srsKort.length);
+    kort.intervall = 3; // reset intervall
+    srsKort.splice(nyPos, 0, kort);
+  }
+  const igjen = srsKort.filter(k=>k.intervall<=3).length;
+  document.getElementById('fc-stats').textContent=
+    `Kan: ${fcKan}  |  Øv mer: ${fcOv}  |  Gjenstår å lære: ${igjen}`;
+  if(fcIdx >= srsKort.length) fcIdx = 0;
+  updateFC();
 }
 
 // ── DIKTAT ───────────────────────────────────
@@ -1005,7 +1078,43 @@ function tomD(i){
 }
 
 // ── UTILITIES ────────────────────────────────
-function showFB(el,ok,msg){el.className='feedback show '+(ok?'correct':'wrong');el.innerHTML=(ok?'✓ ':'✗ ')+msg;}
+// ── PROGRESJON ───────────────────────────────
+function getProgresjon() {
+  try { return JSON.parse(localStorage.getItem('mbo_progresjon') || '{}'); }
+  catch(e) { return {}; }
+}
+function settProgresjon(status) {
+  const p = getProgresjon();
+  p[kapittelId] = { status, dato: new Date().toLocaleDateString('nb-NO') };
+  localStorage.setItem('mbo_progresjon', JSON.stringify(p));
+  oppdaterProgresjonsUI();
+}
+function oppdaterProgresjonsUI() {
+  const p = getProgresjon();
+  const kap = p[kapittelId];
+  const el = document.getElementById('prog-status');
+  if (!el) return;
+  if (!kap) { el.textContent = ''; return; }
+  const farger = { gjennomgaatt: '#2E9E6B', arbeid: '#C9960C', ikkestartet: '#6B7B8D' };
+  const tekster = { gjennomgaatt: '✓ Gjennomgått', arbeid: '⟳ Under arbeid', ikkestartet: '○ Ikke startet' };
+  el.textContent = tekster[kap.status] || '';
+  el.style.color = farger[kap.status] || '#6B7B8D';
+}
+
+// ── UTILITIES ────────────────────────────────────────
+function showFB(el,ok,msg,warn=false){
+  el.className='feedback show '+(ok?'correct':warn?'warn':'wrong');
+  el.innerHTML=(ok?'✓ ':warn?'💡 ':'✗ ')+msg;
+}
+
+// Levenshtein-avstand for fuzzy-matching i fyll-inn
+function levenshtein(a,b){
+  const m=a.length,n=b.length;
+  const dp=Array.from({length:m+1},(_,i)=>Array.from({length:n+1},(_,j)=>i===0?j:j===0?i:0));
+  for(let i=1;i<=m;i++) for(let j=1;j<=n;j++)
+    dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]:1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);
+  return dp[m][n];
+}
 function visToast(msg,feil=false){
   const t=document.getElementById('toast');
   t.textContent=msg;t.style.background=feil?'#D94040':'#1B3A5C';
