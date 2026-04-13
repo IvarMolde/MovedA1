@@ -164,6 +164,56 @@
   }
   .toast.vis { transform: translateY(0); opacity: 1; }
 
+
+  /* ── ORD-HOVER TOOLTIP ── */
+  .ord-chip-wrap { position: relative; display: inline-block; }
+  .ord-chip {
+    font-size: 0.78rem; font-weight: 600;
+    padding: 5px 12px; border-radius: 8px;
+    border: 1.5px solid var(--border);
+    cursor: help; transition: all 0.18s;
+    display: inline-block;
+  }
+  .ord-chip.verb    { background: #EEF4FF; color: #1B3A8C; border-color: #B0C4F0; }
+  .ord-chip.substantiv { background: #E8F7F1; color: #1B5C3A; border-color: #A0D4BC; }
+  .ord-chip.adjektiv { background: #FFF5EE; color: #7A3000; border-color: #F0C090; }
+  .ord-chip.ukjent   { background: var(--cream); color: var(--navy); border-color: var(--border); }
+  .ord-chip:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
+
+  .ord-tooltip {
+    display: none;
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%; transform: translateX(-50%);
+    background: var(--navy);
+    color: white;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 0.78rem;
+    font-weight: 400;
+    white-space: nowrap;
+    z-index: 200;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+    line-height: 1.6;
+    min-width: 180px;
+    text-align: left;
+  }
+  .ord-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%; left: 50%; transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: var(--navy);
+  }
+  .ord-tooltip .tip-display { font-weight: 700; font-size: 0.88rem; color: #E8C050; margin-bottom: 3px; }
+  .ord-tooltip .tip-klasse  { font-size: 0.72rem; opacity: 0.75; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+  .ord-tooltip .tip-boyning { font-size: 0.78rem; }
+  .ord-chip-wrap:hover .ord-tooltip { display: block; animation: fadeIn 0.15s ease; }
+
+  /* Word-knapp */
+  .btn-word { background: #217346; color: white; }
+  .btn-word:hover { background: #1a5c38; transform: translateY(-1px); }
+
   @media (max-width: 640px) {
     .type-grid { grid-template-columns: repeat(2, 1fr); }
     .kap-hero { padding: 28px 16px 24px; }
@@ -299,6 +349,9 @@
             </button>
             <button class="btn btn-gold" id="pptx-btn" onclick="genererPPTX()" style="display:none;">
               📊 Last ned PPTX
+            </button>
+            <button class="btn btn-word" id="docx-btn" onclick="genererDOCX()" style="display:none;">
+              📄 Last ned Word
             </button>
             <button class="btn btn-secondary" id="kopier-btn" onclick="kopier()" style="display:none;">
               📋 Kopier tekst
@@ -454,9 +507,17 @@ function renderKapittelInfo() {
     <div class="gram-item">${g}</div>
   `).join('');
 
-  // Ordliste
-  document.getElementById('ord-liste').innerHTML = kapData.ordliste.map(o => `
-    <span class="ord-chip">${o}</span>
+  // Ordliste med hover-tooltip
+  const ordliste = kapData.ordlisteBeriket || kapData.ordliste.map(o => ({ ord: o, display: o, klasse: 'ukjent', bøyning: '' }));
+  document.getElementById('ord-liste').innerHTML = ordliste.map(o => `
+    <span class="ord-chip-wrap">
+      <span class="ord-chip ${o.klasse}">${o.display}</span>
+      <div class="ord-tooltip">
+        <div class="tip-display">${o.display}</div>
+        <div class="tip-klasse">${o.klasse}</div>
+        <div class="tip-boyning">${o.bøyning || ''}</div>
+      </div>
+    </span>
   `).join('');
 
   // Yrke i yrke-felt
@@ -495,6 +556,7 @@ async function generer() {
   document.getElementById('preview-title').textContent =
     `${typeTittel(valgtType)} – Kap. ${kapData.id}: ${kapData.tittel}`;
   document.getElementById('pptx-btn').style.display = 'none';
+  document.getElementById('docx-btn').style.display = 'none';
   document.getElementById('kopier-btn').style.display = 'none';
 
   try {
@@ -519,6 +581,7 @@ async function generer() {
 
     previewBody.classList.remove('streaming');
     document.getElementById('pptx-btn').style.display = 'inline-flex';
+    document.getElementById('docx-btn').style.display = 'inline-flex';
     document.getElementById('kopier-btn').style.display = 'inline-flex';
     visToast('✅ Innhold generert!');
 
@@ -566,6 +629,39 @@ async function genererPPTX() {
     btn.innerHTML = '📊 Last ned PPTX';
   }
 }
+// ── LAST NED WORD ─────────────────────────────────────
+async function genererDOCX() {
+  const btn = document.getElementById('docx-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div> Lager Word...';
+
+  try {
+    const resp = await fetch('/api/generer-docx', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        kapittelId: kapData.id,
+        innhold: genererResult,
+        type: valgtType
+      })
+    });
+    if (!resp.ok) throw new Error('DOCX-feil');
+    const blob = await resp.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `kap${kapData.id}_${kapData.tittel.replace(/\s+/g,'_').toLowerCase()}.docx`;
+    a.click();
+    URL.revokeObjectURL(url);
+    visToast('📄 Word-fil lastet ned!');
+  } catch (e) {
+    visToast('⚠️ Word-generering feilet. Prøv igjen.', true);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '📄 Last ned Word';
+  }
+}
+
 
 // ── KOPIER ───────────────────────────────────────────
 async function kopier() {
