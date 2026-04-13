@@ -10,7 +10,7 @@
       { "id": "1.2", "tittel": "Hva heter du?" },
       { "id": "1.3", "tittel": "Nå bor jeg i Norge" },
       { "id": "1.4", "tittel": "Jeg snakker litt norsk" },
-      { "id": "1.5", "tittel": "Yrkestekst: Jeg er lærer" }
+      { "id": "1.5", "tittel": "Yrkestekst" }
     ],
     "funksjoner": ["Hilsefraser", "Navn", "Språk og land", "Be om gjentagelse", "Si at man ikke forstår", "Fylle ut skjema", "Tall 1–10", "Alfabetet", "Ukedagene, timeplan"],
     "grammatikk": ["Personlig pronomen (subjekt)", "Verb i presens", "Ordstilling: V2-regelen", "Plassering av ikke", "Helsetninger, spørresetninger", "Spørreord: hva, hvem, hvor", "Tegnsetting"],
@@ -29,7 +29,7 @@
       { "id": "2.2", "tittel": "Jeg kom til Norge i mai" },
       { "id": "2.3", "tittel": "Jeg savner dem" },
       { "id": "2.4", "tittel": "Hva betyr det?" },
-      { "id": "2.5", "tittel": "Yrkestekst: Jeg er lege" }
+      { "id": "2.5", "tittel": "Yrkestekst" }
     ],
     "funksjoner": ["Hilsefraser", "Alder", "Telefonnummer", "Hva gjør du nå?", "Når kom du til Norge?", "Vennskap", "Sivilstatus", "Måneder og årstall", "Tall"],
     "grammatikk": ["Spørreord: når, hvor gammel, hvordan", "Substantiv: kjønn og tall", "Preposisjoner for adresse: i, på", "Personlig pronomen (objekt)", "SVO-setninger", "Inversjon med tid først"],
@@ -48,7 +48,7 @@
       { "id": "3.2", "tittel": "Jeg kommer ikke på norskkurs i dag" },
       { "id": "3.3", "tittel": "Sompit skal besøke svigermor" },
       { "id": "3.4", "tittel": "Skal vi gå på konsert?" },
-      { "id": "3.5", "tittel": "Yrkestekst: Jeg er bilmekaniker" }
+      { "id": "3.5", "tittel": "Yrkestekst" }
     ],
     "funksjoner": ["Familie", "Husarbeid og aktiviteter", "Hjemme", "Fritidsinteresser", "Sende SMS", "Gjøre avtaler", "Pausesnakk på jobb"],
     "grammatikk": ["Eieforhold med «til»", "Substantiv: bestemt form", "Stedsadverb: hjem, hjemme", "Spørreord: hvor mange", "Modalverb: skal, vil, må, kan", "Verb: infinitiv etter modalverb"],
@@ -67,7 +67,7 @@
       { "id": "4.2", "tittel": "Hjemme hos Bjørnar" },
       { "id": "4.3", "tittel": "Skal vi møtes en dag?" },
       { "id": "4.4", "tittel": "På kafé" },
-      { "id": "4.5", "tittel": "Yrkestekst: Jeg er servitør" }
+      { "id": "4.5", "tittel": "Yrkestekst" }
     ],
     "funksjoner": ["Klokka", "Måltider", "Fritid", "Tider på døgnet", "Bestille"],
     "grammatikk": ["Pronomen: refleksiv form: seg", "Refleksive verb", "Adverb: rekkefølge i tid", "Tekstbinding: og, men", "Verb: infinitiv med å", "Substantiv"],
@@ -86,7 +86,7 @@
       { "id": "5.2", "tittel": "På stranda" },
       { "id": "5.3", "tittel": "Jeg savner sommeren" },
       { "id": "5.4", "tittel": "Hvilken dato er det?" },
-      { "id": "5.5", "tittel": "Yrkestekst: Jeg er barnehageassistent" }
+      { "id": "5.5", "tittel": "Yrkestekst" }
     ],
     "funksjoner": ["Været og årstidene", "Uteaktiviteter", "Ordenstall", "Dato og fødselsdato", "Henting i barnehage", "Personalmøte"],
     "grammatikk": ["Verb: verbuttrykk med infinitiv", "Substantiv: bestemt form", "Stedsadverb: ut, ute, inn, inne", "Det-setninger om været"],
@@ -105,7 +105,7 @@
       { "id": "6.2", "tittel": "Hva gjorde du i helga?" },
       { "id": "6.3", "tittel": "Hva gjorde du i fritida i hjemlandet?" },
       { "id": "6.4", "tittel": "Når kom du til Norge?" },
-      { "id": "6.5", "tittel": "Yrkestekst: Jeg er hotellmedarbeider" }
+      { "id": "6.5", "tittel": "Yrkestekst" }
     ],
     "funksjoner": ["Pausesnakk på jobb", "Fritidsaktiviteter"],
     "grammatikk": ["Verb: preteritum", "Tidsuttrykk i fortid", "Preposisjoner for tid"],
@@ -124,7 +124,7 @@
       { "id": "7.2", "tittel": "Hva gjorde du i Bergen?" },
       { "id": "7.3", "tittel": "Unnskyld at jeg kommer for sent!" },
       { "id": "7.4", "tittel": "Går denne bussen til Førde?" },
-      { "id": "7.5", "tittel": "Yrkestekst: Jeg er bussjåfør" }
+      { "id": "7.5", "tittel": "Yrkestekst" }
     ],
     "funksjoner": ["Transportmidler", "Veibeskrivelser", "Fortelle om en reise", "Komme for sent", "Komme presis"],
     "grammatikk": ["Preposisjoner og uttrykk for plassering", "Stedsadverb: hit, her, dit, der", "Pekeord: den, denne, det, dette, de, disse", "Tekstbinding: for"],
@@ -143,7 +143,7 @@
       { "id": "8.2", "tittel": "Bjørnar liker å gå på loppemarked" },
       { "id": "8.3", "tittel": "Vi bare kikker" },
       { "id": "8.4", "tittel": "Marit handler til bursdagsmiddag" },
-      { "id": "8.5", "tittel": "Yrkestekst: Jeg er butikkmedarbeider / frisør" }
+      { "id": "8.5", "tittel": "Yrkestekst" }
     ],
     "funksjoner": ["Klær, farger og størrelser", "Gå i butikken og handle", "Matvarer", "Bruke finn.no", "Loppemarked"],
     "grammatikk": ["Adjektiv: kjønn og tall, regelrett bøyning", "Substantiv: kjønn, form og tall", "Spørreord: hvilken, hvilket, hvilke, hvor mange, hvor mye", "Mengdeord: mye, mange", "Så som gradsadverb", "Årsaksforklaring: for å"],
@@ -162,7 +162,7 @@
       { "id": "9.2", "tittel": "Marek har flyttet" },
       { "id": "9.3", "tittel": "Hvor lenge har du bodd her?" },
       { "id": "9.4", "tittel": "Har du vært på dugnad?" },
-      { "id": "9.5", "tittel": "Yrkestekst: Jeg er snekker" }
+      { "id": "9.5", "tittel": "Yrkestekst" }
     ],
     "funksjoner": ["Boligtyper, inventar, nærmiljø, naboforhold", "Dugnad", "Oppussing", "Eie og leie", "Boliglån"],
     "grammatikk": ["Presens perfektum", "Adjektiv: bestemt form og flere uregelrette bøyninger"],
@@ -181,7 +181,7 @@
       { "id": "10.2", "tittel": "Vil dere komme i bryllupet vårt?" },
       { "id": "10.3", "tittel": "Vennene våre giftet seg i helga" },
       { "id": "10.4", "tittel": "Innflyttingsfest hos Marek og Ewa" },
-      { "id": "10.5", "tittel": "Yrkestekst: Jeg er kokk" }
+      { "id": "10.5", "tittel": "Yrkestekst" }
     ],
     "funksjoner": ["Feiringer, seremonier og høytider i Norge og i hjemlandet", "Invitasjoner"],
     "grammatikk": ["Eiendomsord"],
@@ -200,7 +200,7 @@
       { "id": "11.2", "tittel": "Det er typisk norsk å dra på hytta" },
       { "id": "11.3", "tittel": "Norsk geografi" },
       { "id": "11.4", "tittel": "En hilsen fra Hurtigruten" },
-      { "id": "11.5", "tittel": "Yrkestekst: Jeg er turistguide" }
+      { "id": "11.5", "tittel": "Yrkestekst" }
     ],
     "funksjoner": ["Typisk norsk", "Ferievaner", "Bruk av naturen", "Norsk natur og geografi", "Hurtigruten", "Kjæledyr"],
     "grammatikk": ["Adjektiv: gradbøyning", "Som-setninger"],
@@ -219,7 +219,7 @@
       { "id": "12.2", "tittel": "Jeg føler meg litt dårlig" },
       { "id": "12.3", "tittel": "Vi må holde oss i form" },
       { "id": "12.4", "tittel": "Vi må prøve å spise sunt" },
-      { "id": "12.5", "tittel": "Yrkestekst: Jeg er pleieassistent" }
+      { "id": "12.5", "tittel": "Yrkestekst" }
     ],
     "funksjoner": ["Helse, sykdommer, kosthold, kroppsdeler", "Å holde seg i form, å ha et godt liv", "Helseyrker, fastlegeordningen", "Nødnumrene"],
     "grammatikk": ["Leddsetninger: synes at, tror at, sier at, spør om", "Adverb: måte"],
@@ -238,7 +238,7 @@
       { "id": "13.2", "tittel": "Skal du på foreldremøte?" },
       { "id": "13.3", "tittel": "Yrkesfaglig opplæring i Norge" },
       { "id": "13.4", "tittel": "Å studere i Norge" },
-      { "id": "13.5", "tittel": "Yrkestekst: Jeg er renholder" }
+      { "id": "13.5", "tittel": "Yrkestekst" }
     ],
     "funksjoner": ["Skole og utdanning i Norge og i hjemlandet", "Skole/hjem-samarbeid", "Fagbrev og yrkesfaglig opplæring", "Lån og stipend", "Drømmer og framtidsplaner"],
     "grammatikk": ["Eiendomsord, refleksiv form: sin, si, sitt, sine", "Leddsetninger: da, når, fordi", "Ordstilling i leddsetning: S(A)V"],
@@ -257,7 +257,7 @@
       { "id": "14.2", "tittel": "På sjefens kontor" },
       { "id": "14.3", "tittel": "Arbeidsliv" },
       { "id": "14.4", "tittel": "Vanskelige situasjoner på jobben" },
-      { "id": "14.5", "tittel": "Yrkestekst: Jeg er barneskolelærer" }
+      { "id": "14.5", "tittel": "Yrkestekst" }
     ],
     "funksjoner": ["Arbeidsliv", "Regler i arbeidslivet", "Egenskaper", "Jobben din, yrket ditt", "Tips til hvordan man kan finne en jobb", "Søknad, cv, jobbintervju", "Vanskelige situasjoner på jobb", "Motta beskjeder"],
     "grammatikk": ["Leddsetninger: hvis", "Forskjellen på hvis og om", "Mer om ordstilling i leddsetning, SAV"],
