@@ -152,6 +152,111 @@ app.post("/api/generer-pptx", requireAuth, async (req, res) => {
 app.get("/api/helse", (req, res) => res.json({ status: "ok", timestamp: new Date().toISOString() }));
 
 // ── PROMPT-BYGGER ─────────────────────────────────────
+
+// ── API: GENERER TEKST + OPPGAVER (kombinert) ────────
+app.post("/api/generer-komplett", requireAuth, async (req, res) => {
+  const { kapittelId, leksjon, type, yrke, nivaa = "A1" } = req.body;
+  if (!kapittelId || !type) return res.status(400).json({ error: "Mangler data" });
+  const kap = kapitler.find(k => k.id === parseInt(kapittelId));
+  if (!kap) return res.status(404).json({ error: "Kapittel ikke funnet" });
+
+  try {
+    const { GoogleGenerativeAI } = require("@google/generative-ai");
+    const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+
+    const leksjonTekst = leksjon
+      ? `Leksjon ${leksjon}: ${kap.leksjoner.find(l => l.id === leksjon)?.tittel || leksjon}`
+      : `Hele kapittelet: ${kap.tittel}`;
+    const yrkeTekst = yrke ? `\nElevenes yrkesbakgrunn: ${yrke}` : "";
+
+    const prompt = `Du er en erfaren norsklærer ved Molde voksenopplæringssenter (MOVED).
+Du lager undervisningsmateriell for CEFR-nivå ${nivaa} for voksne innvandrere (25–55 år).
+
+VIKTIGE REGLER:
+- Kun bokmål. Ingen morsmålsstøtte.
+- Aldersadekvat – IKKE barnetema. Voksne i realistiske situasjoner.
+- Enkelt språk: A1 = maks 7 ord per setning.
+- Bruk ord fra kapittelets nøkkelord der det passer naturlig.
+
+KAPITTELKONTEKST:
+Kapittel ${kap.id}: ${kap.tittel}
+${leksjonTekst}
+Kommunikative mål: ${kap.funksjoner.join(", ")}
+Grammatikk: ${kap.grammatikk.join(", ")}
+Nøkkelord: ${kap.ordliste.join(", ")}${yrkeTekst}
+
+OPPGAVE: Lag en komplett leksjon som inneholder BEGGE deler:
+
+DEL 1 – LESETEKST (60–80 ord):
+En kort tekst om en voksen person i en situasjon knyttet til kapittelet.
+Bruk enkle setninger. Teksten er grunnlaget for alle oppgavene i del 2.
+
+DEL 2 – INTERAKTIVE OPPGAVER basert på teksten over:
+Lag NØYAKTIG dette JSON-objektet (ingen tekst utenfor JSON):
+
+{
+  "lesetekst": "Hele leseteksten her som én streng",
+  "mc": [
+    {"spm": "Spørsmål basert på teksten?", "alternativer": ["Svar A", "Svar B", "Svar C", "Svar D"], "riktig": 0},
+    {"spm": "...", "alternativer": ["...", "...", "...", "..."], "riktig": 1},
+    {"spm": "...", "alternativer": ["...", "...", "...", "..."], "riktig": 2},
+    {"spm": "...", "alternativer": ["...", "...", "...", "..."], "riktig": 0},
+    {"spm": "...", "alternativer": ["...", "...", "...", "..."], "riktig": 1}
+  ],
+  "fyll_inn": [
+    {"for": "tekst før tomrom", "etter": "tekst etter tomrom", "svar": "riktig ord", "hint": "(ordklasse)"},
+    {"for": "...", "etter": "...", "svar": "...", "hint": "..."},
+    {"for": "...", "etter": "...", "svar": "...", "hint": "..."},
+    {"for": "...", "etter": "...", "svar": "...", "hint": "..."},
+    {"for": "...", "etter": "...", "svar": "...", "hint": "..."}
+  ],
+  "sant_usant": [
+    {"pastand": "Påstand basert på teksten.", "riktig": true},
+    {"pastand": "...", "riktig": false},
+    {"pastand": "...", "riktig": true},
+    {"pastand": "...", "riktig": false},
+    {"pastand": "...", "riktig": true},
+    {"pastand": "...", "riktig": false}
+  ],
+  "ordstilling": [
+    {"ord": ["Verb", "Subjekt", "objekt", "adverb"], "riktig": "Subjekt Verb objekt adverb"},
+    {"ord": ["...", "...", "...", "..."], "riktig": "..."},
+    {"ord": ["...", "...", "...", "..."], "riktig": "..."},
+    {"ord": ["...", "...", "..."], "riktig": "..."}
+  ],
+  "koble_par": [
+    {"nor": "norsk ord/uttrykk fra teksten", "forklaring": "enkel norsk forklaring"},
+    {"nor": "...", "forklaring": "..."},
+    {"nor": "...", "forklaring": "..."},
+    {"nor": "...", "forklaring": "..."},
+    {"nor": "...", "forklaring": "..."},
+    {"nor": "...", "forklaring": "..."}
+  ],
+  "diktat": [
+    "Setning 1 fra teksten.",
+    "Setning 2 fra teksten.",
+    "Setning 3 fra teksten.",
+    "Setning 4 fra teksten."
+  ]
+}
+
+KRITISK: Svar KUN med det rene JSON-objektet. Ingen forklaring, ingen markdown, ingen \`\`\`json blokker.`;
+
+    const result = await model.generateContent(prompt);
+    const rawText = result.response.text().trim();
+
+    // Parse JSON – fjern eventuelle markdown-backticks
+    const cleaned = rawText.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```\s*$/i, '').trim();
+    const data = JSON.parse(cleaned);
+
+    res.json({ ok: true, data });
+  } catch (err) {
+    console.error("Komplett-generering feil:", err.message);
+    res.status(500).json({ error: "Generering feilet: " + err.message });
+  }
+});
+
 function byggPrompt({ kap, leksjon, type, yrke, nivaa }) {
   const leksjonTekst = leksjon
     ? `Leksjon ${leksjon}: ${kap.leksjoner.find(l => l.id === leksjon)?.tittel || leksjon}`
