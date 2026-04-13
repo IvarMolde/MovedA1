@@ -322,6 +322,7 @@ function visKapitler(kap) {
       </div>
       <div class="kort-footer">
         <span class="kort-footer-text">${k.leksjoner.length} leksjoner</span>
+        <span id="prog-${k.id}" style="font-size:.72rem;font-weight:700;"></span>
         <div class="kort-pil">→</div>
       </div>
     </a>
@@ -337,7 +338,7 @@ function filtrer(type, btn) {
   if (type === 'yrke') return visKapitler(alleKapitler.filter(k => k.yrke));
 }
 
-lastKapitler();
+lastKapitler().then(() => visProg());
 </script>
 </body>
 </html>
