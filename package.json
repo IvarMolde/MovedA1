@@ -1,21 +1,21 @@
 {
   "name": "norsk-a1-portal",
   "version": "1.0.0",
-  "description": "MOVED – Norsk A1 lærerportal for Molde voksenopplæringssenter",
+  "description": "MOVED \u2013 Norsk A1 l\u00e6rerportal for Molde voksenoppl\u00e6ringssenter",
   "main": "server.js",
   "scripts": {
     "dev": "node server.js",
     "start": "node server.js"
   },
   "dependencies": {
-    "express": "^4.18.2",
-    "express-session": "^1.17.3",
-    "cookie-parser": "^1.4.6",
     "@google/generative-ai": "^0.21.0",
-    "pptxgenjs": "^3.12.0",
+    "cookie-parser": "^1.4.6",
     "docx": "^8.5.0",
     "dotenv": "^16.4.5",
-    "multer": "^1.4.5-lts.1"
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "multer": "^1.4.5-lts.1",
+    "pptxgenjs": "^3.12.0"
   },
   "engines": {
     "node": ">=18.x"
