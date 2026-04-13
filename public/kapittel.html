@@ -26,7 +26,14 @@ body{
 /* ── TOPPMENY ── */
 .topbar{background:var(--navy);height:60px;flex-shrink:0;position:sticky;top:0;z-index:200;box-shadow:0 2px 12px rgba(0,0,0,.18);}
 .topbar-inner{padding:0 20px;display:flex;align-items:center;gap:12px;height:100%;}
-.topbar-logo img{height:32px;width:auto;}
+.topbar-logo{
+  background:white;
+  border-radius:8px;
+  padding:5px 10px;
+  display:inline-flex;
+  align-items:center;
+}
+.topbar-logo img{height:38px;width:auto;display:block;}
 .topbar-kap{font-size:.82rem;font-weight:500;color:rgba(255,255,255,.6);display:flex;align-items:center;gap:8px;}
 .topbar-kap a{color:rgba(255,255,255,.6);text-decoration:none;}
 .topbar-kap a:hover{color:white;}
