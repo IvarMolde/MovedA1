@@ -190,6 +190,7 @@ OPPGAVE: Lag en komplett leksjon som inneholder BEGGE deler:
 
 DEL 1 – LESETEKST (60–80 ord):
 En kort tekst om en voksen person i en situasjon knyttet til kapittelet.
+Hvis type er "yrkestekst": teksten skal handle om en person i jobben sin.
 Bruk enkle setninger. Teksten er grunnlaget for alle oppgavene i del 2.
 
 DEL 2 – INTERAKTIVE OPPGAVER basert på teksten over:
@@ -267,7 +268,18 @@ function byggPrompt({ kap, leksjon, type, yrke, nivaa }) {
     arbeidsark: `Lag et komplett arbeidsark med: 1) Læringsmål (2–3 punkter med «Etter denne timen kan jeg...»), 2) Ordliste med 8 nøkkelord og forklaring på enkel norsk, 3) Fem varierte oppgaver (a–e): fyll inn, sant/usant, koble par, skriv setning, muntlig øvelse. Aldersadekvat innhold for voksne.`,
     grammatikk: `Lag en grammatikkøvelse om: ${kap.grammatikk.join(", ")}. Inkluder: 1) Enkel regelforklaring (3–4 setninger), 2) Tre eksempler i kontekst, 3) Åtte øvingssetninger (fyll inn riktig form), 4) Fasit. Bruk ord fra kapittelet.`,
     samtale: `Lag en strukturert samtaleøvelse for par. Inkluder: 1) Situasjonsbeskrivelse, 2) Nyttige fraser/uttrykk (8 setninger), 3) Dialogstarter A og B med noen faste fraser og noen åpne felt, 4) To oppfølgingsspørsmål til hele klassen. Tema skal være realistisk for voksne.`,
-    yrkestekst: `Lag en yrkestekst om ${yrke || kap.yrke} som bruker ord og situasjoner fra kapittelet. Inkluder: 1) En kort presentasjonstekst (60 ord, jeg-form), 2) 5 yrkesspesifikke ord med forklaring, 3) Tre oppgaver knyttet til yrkeskontekst (a–c).`,
+    yrkestekst: (() => {
+      const vanligeYrker = [
+        "sykepleier", "renholder", "bussjåfør", "kokk", "butikkmedarbeider",
+        "barnehageassistent", "lagermedarbeider", "snekker", "elektriker",
+        "servitør", "taxisjåfør", "vaktmester", "hjemmehjelp", "postbud",
+        "frisør", "baker", "mekaniker", "gartnere", "sikkerhetsvakt"
+      ];
+      const valgtYrke = yrke && yrke.trim()
+        ? yrke.trim()
+        : vanligeYrker[Math.floor(Math.random() * vanligeYrker.length)];
+      return `Lag en yrkestekst om en person som jobber som ${valgtYrke}. Bruk ord og situasjoner fra kapittelet. Inkluder: 1) En kort presentasjonstekst (60 ord, jeg-form) der personen forteller om jobben sin, 2) 5 yrkesspesifikke ord med forklaring på enkel norsk, 3) Tre oppgaver knyttet til yrkeskontekst (a–c). Aldersadekvat innhold for voksne.`;
+    })(),
   }[type] || "Lag relevant undervisningsmateriell for dette kapittelet.";
 
   return `Du er en erfaren norsklærer ved Molde voksenopplæringssenter (MOVED).
