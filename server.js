@@ -114,12 +114,12 @@ app.post("/api/generer", requireAuth, async (req, res) => {
 
 // ── API: GENERER WORD (.docx) ────────────────────────
 app.post("/api/generer-docx", requireAuth, async (req, res) => {
-  const { kapittelId, innhold, type } = req.body;
+  const { kapittelId, innhold, type, genData } = req.body;
   const kap = kapitler.find(k => k.id === parseInt(kapittelId));
   if (!kap) return res.status(404).json({ error: "Kapittel ikke funnet" });
 
   try {
-    const docxBuffer = await genererDOCX({ kap, innhold, type });
+    const docxBuffer = await genererDOCX({ kap, innhold, type, genData });
     const filnavn = `kap${kap.id}_${kap.tittel.replace(/\s+/g, "_").toLowerCase()}.docx`;
     res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
     res.setHeader("Content-Disposition", `attachment; filename="${filnavn}"`);
@@ -239,10 +239,25 @@ Lag NØYAKTIG dette JSON-objektet (ingen tekst utenfor JSON):
     "Setning 2 fra teksten.",
     "Setning 3 fra teksten.",
     "Setning 4 fra teksten."
+  ],
+  "laringsmaal": [
+    "Jeg kan [konkret kommunikativt mål fra kapittelet].",
+    "Jeg kan [konkret grammatisk mål fra kapittelet].",
+    "Jeg kan [konkret praktisk mål fra kapittelet]."
+  ],
+  "fasit": {
+    "fyll_inn": ["svar1", "svar2", "svar3", "svar4", "svar5"],
+    "sant_usant": [true, false, true, false, true, false],
+    "ordstilling": ["Riktig setning 1", "Riktig setning 2", "Riktig setning 3", "Riktig setning 4"],
+    "mc_forklaring": ["Kort forklaring til svar 1", "Kort forklaring til svar 2", "Kort forklaring til svar 3", "Kort forklaring til svar 4", "Kort forklaring til svar 5"]
+  },
+  "bilde_forslag": [
+    "[BILDE: beskrivelse av relevant bilde for leseteksten]",
+    "[BILDE: beskrivelse av relevant bilde for ordlisten]"
   ]
 }
 
-KRITISK: Svar KUN med det rene JSON-objektet. Ingen forklaring, ingen markdown, ingen \`\`\`json blokker.`;
+KRITISK: Svar KUN med det rene JSON-objektet. Ingen forklaring, ingen markdown, ingen backtick-blokker.`;
 
     const result = await model.generateContent(prompt);
     const rawText = result.response.text().trim();
@@ -307,7 +322,7 @@ Svar direkte med innholdet – ingen forklaring eller metakommentar.`;
 }
 
 // ── WORD-GENERERING (.docx) ──────────────────────────
-async function genererDOCX({ kap, innhold, type }) {
+async function genererDOCX({ kap, innhold, type, genData }) {
   const {
     Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell,
     AlignmentType, HeadingLevel, BorderStyle, WidthType, ShadingType,
@@ -369,6 +384,11 @@ async function genererDOCX({ kap, innhold, type }) {
     border: { bottom: { style: BorderStyle.SINGLE, size: 6, color: GOLD, space: 1 } },
   });
 
+  // Dynamiske læringsmål fra Gemini (eller fallback)
+  const lmaal = (genData && genData.laringsmaal && genData.laringsmaal.length)
+    ? genData.laringsmaal
+    : [`Jeg kan bruke nøkkelord fra kapittelet: ${kap.tittel}.`, `Jeg kan kommunisere om: ${kap.funksjoner[0]}.`, `Jeg kan lese og forstå en enkel tekst om dette temaet.`];
+
   const laringsmaalBoks = new Table({
     width: { size: 9026, type: WidthType.DXA },
     columnWidths: [9026],
@@ -380,9 +400,7 @@ async function genererDOCX({ kap, innhold, type }) {
         width: { size: 9026, type: WidthType.DXA },
         children: [
           new Paragraph({ children: [new TextRun({ text: "Etter denne timen kan jeg:", bold: true, size: 22, font: "Arial", color: NAVY })], spacing: { after: 80 } }),
-          new Paragraph({ children: [new TextRun({ text: "✓  hilse og presentere meg på norsk", size: 22, font: "Arial" })], spacing: { after: 40 } }),
-          new Paragraph({ children: [new TextRun({ text: "✓  si hvor jeg kommer fra og hvor jeg bor", size: 22, font: "Arial" })], spacing: { after: 40 } }),
-          new Paragraph({ children: [new TextRun({ text: `✓  bruke nøkkelord fra kapittelet: ${kap.tittel}`, size: 22, font: "Arial" })], spacing: { after: 40 } }),
+          ...lmaal.map(m => new Paragraph({ children: [new TextRun({ text: `✓  ${m}`, size: 22, font: "Arial" })], spacing: { after: 40 } })),
         ],
       })],
     })],
@@ -451,6 +469,28 @@ async function genererDOCX({ kap, innhold, type }) {
     columnWidths: [2800, 3626, 2600],
     rows: [ordlisteHeader2, ...ordlisteRader],
   });
+
+  // ── BILDEPLASSERINGER ──
+  const bildeParagrafer = [];
+  const bilder = (genData && genData.bilde_forslag) ? genData.bilde_forslag : [];
+  if (bilder.length > 0) {
+    bildeParagrafer.push(
+      new Paragraph({ children: [new TextRun({ text: "🖼️ Bildeplasseringer", bold: true, size: 26, font: "Arial", color: NAVY })], spacing: { before: 200, after: 80 }, border: { bottom: { style: BorderStyle.SINGLE, size: 4, color: GOLD, space: 1 } } })
+    );
+    bilder.forEach(b => {
+      bildeParagrafer.push(
+        new Table({
+          width: { size: 9026, type: WidthType.DXA }, columnWidths: [9026],
+          rows: [new TableRow({ children: [new TableCell({
+            borders: noBorders, width: { size: 9026, type: WidthType.DXA },
+            margins: { top: 120, bottom: 120, left: 180, right: 180 },
+            shading: { fill: "F0F0F0", type: ShadingType.CLEAR },
+            children: [new Paragraph({ children: [new TextRun({ text: b, size: 20, font: "Arial", color: "555555", italics: true })] })]
+          })] })]
+        })
+      );
+    });
+  }
 
   // ── INNHOLD FRA AI ──
   const innholdHeader = new Paragraph({
@@ -525,20 +565,52 @@ async function genererDOCX({ kap, innhold, type }) {
     spacing: { before: 80, after: 80 },
   });
 
+  // Dynamisk fasit fra Gemini
+  const fasit = (genData && genData.fasit) ? genData.fasit : null;
+  const fasitBarn = [];
+
+  if (fasit) {
+    // Fyll inn
+    if (fasit.fyll_inn && fasit.fyll_inn.length) {
+      fasitBarn.push(new Paragraph({ children: [new TextRun({ text: "Fyll inn:", bold: true, size: 20, font: "Arial", color: NAVY })], spacing: { before: 80, after: 40 } }));
+      fasit.fyll_inn.forEach((svar, i) => {
+        fasitBarn.push(new Paragraph({ children: [new TextRun({ text: `${String.fromCharCode(97+i)})  ${svar}`, size: 20, font: "Arial" })], spacing: { after: 20 } }));
+      });
+    }
+    // Sant / usant
+    if (fasit.sant_usant && fasit.sant_usant.length) {
+      fasitBarn.push(new Paragraph({ children: [new TextRun({ text: "Sant / usant:", bold: true, size: 20, font: "Arial", color: NAVY })], spacing: { before: 120, after: 40 } }));
+      fasit.sant_usant.forEach((riktig, i) => {
+        fasitBarn.push(new Paragraph({ children: [new TextRun({ text: `${i+1}.  ${riktig ? "SANT ✓" : "USANT ✗"}`, size: 20, font: "Arial" })], spacing: { after: 20 } }));
+      });
+    }
+    // Ordstilling
+    if (fasit.ordstilling && fasit.ordstilling.length) {
+      fasitBarn.push(new Paragraph({ children: [new TextRun({ text: "Ordstilling:", bold: true, size: 20, font: "Arial", color: NAVY })], spacing: { before: 120, after: 40 } }));
+      fasit.ordstilling.forEach((setning, i) => {
+        fasitBarn.push(new Paragraph({ children: [new TextRun({ text: `${i+1}.  ${setning}`, size: 20, font: "Arial" })], spacing: { after: 20 } }));
+      });
+    }
+    // Flervalg forklaring
+    if (fasit.mc_forklaring && fasit.mc_forklaring.length) {
+      fasitBarn.push(new Paragraph({ children: [new TextRun({ text: "Flervalg – forklaringer:", bold: true, size: 20, font: "Arial", color: NAVY })], spacing: { before: 120, after: 40 } }));
+      fasit.mc_forklaring.forEach((forkl, i) => {
+        fasitBarn.push(new Paragraph({ children: [new TextRun({ text: `${i+1}.  ${forkl}`, size: 20, font: "Arial" })], spacing: { after: 20 } }));
+      });
+    }
+  } else {
+    fasitBarn.push(new Paragraph({ children: [new TextRun({ text: "Fasit genereres automatisk neste gang du laster ned Word-filen etter å ha klikket Generer.", size: 20, italics: true, font: "Arial", color: "666666" })] }));
+  }
+
   const fasitBoks = new Table({
-    width: { size: 9026, type: WidthType.DXA },
-    columnWidths: [9026],
-    rows: [new TableRow({
-      children: [new TableCell({
-        borders: noBorders,
-        shading: { fill: LIGHT_GREY, type: ShadingType.CLEAR },
-        margins: { top: 120, bottom: 120, left: 180, right: 180 },
-        width: { size: 9026, type: WidthType.DXA },
-        children: [
-          new Paragraph({ children: [new TextRun({ text: "Fasit legges inn av læreren. Se generert innhold ovenfor.", size: 20, italics: true, font: "Arial", color: "666666" })] }),
-        ],
-      })],
-    })],
+    width: { size: 9026, type: WidthType.DXA }, columnWidths: [9026],
+    rows: [new TableRow({ children: [new TableCell({
+      borders: noBorders,
+      shading: { fill: LIGHT_GREY, type: ShadingType.CLEAR },
+      margins: { top: 120, bottom: 120, left: 180, right: 180 },
+      width: { size: 9026, type: WidthType.DXA },
+      children: fasitBarn,
+    })] })],
   });
 
   // ── BYGG DOKUMENT ──
@@ -562,6 +634,7 @@ async function genererDOCX({ kap, innhold, type }) {
         ordlisteHeader,
         ordliste,
         new Paragraph({ children: [], spacing: { after: 80 } }),
+        ...(bildeParagrafer.length ? [...bildeParagrafer, new Paragraph({ children: [], spacing: { after: 80 } })] : []),
         innholdHeader,
         ...innholdParagrafer,
         new Paragraph({ children: [], spacing: { after: 80 } }),
