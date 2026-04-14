@@ -663,68 +663,80 @@ async function genererPPTX({ kap, tittel, innhold, grammatikk, oppgaver }) {
   };
 
   const assetsDir = path.join(__dirname, "public/assets");
-  const logoMoved = fs.readFileSync(path.join(assetsDir, "logo_moved.png")).toString("base64");
+  const logoMoved   = fs.readFileSync(path.join(assetsDir, "logo_moved.png")).toString("base64");
   const logoKommune = fs.readFileSync(path.join(assetsDir, "logo_kommune.png")).toString("base64");
   const fjordBanner = fs.readFileSync(path.join(assetsDir, "fjord_banner.png")).toString("base64");
 
-  const logoMovedData = `image/png;base64,${logoMoved}`;
+  const logoMovedData   = `image/png;base64,${logoMoved}`;
   const logoKommuneData = `image/png;base64,${logoKommune}`;
-  const fjordData = `image/png;base64,${fjordBanner}`;
+  const fjordData       = `image/png;base64,${fjordBanner}`;
   const kapNavn = `Kapittel ${kap.id} – ${kap.tittel}`;
 
+  // ── HJELPEFUNKSJONER ──────────────────────────────────────────────────────
+
+  // Én MOVED-logo øverst til høyre, alltid hvit bakgrunn for god kontrast
+  function addLogo(slide) {
+    slide.addShape("rect", {
+      x: 8.0, y: 0.12, w: 1.85, h: 0.78,
+      fill: { color: C.white }, line: { color: C.white }
+    });
+    slide.addImage({ data: logoMovedData, x: 8.08, y: 0.20, w: 1.68, h: 0.58, altText: "MOVED" });
+  }
+
+  // Footer med fjordbilde + Molde Kommune-logo (UTEN MOVED-logo)
   function addFooter(slide) {
     slide.addImage({ data: fjordData, x: 0, y: 4.68, w: 10, h: 1.0, altText: "Molde fjord" });
     slide.addShape("rect", { x: 0, y: 5.35, w: 10, h: 0.275, fill: { color: C.navy }, line: { color: C.navy } });
-    slide.addImage({ data: logoMovedData, x: 7.8, y: 4.72, w: 1.8, h: 0.51, altText: "MOVED" });
     slide.addImage({ data: logoKommuneData, x: 0.25, y: 4.77, w: 1.3, h: 0.42, altText: "Molde Kommune" });
     slide.addText(kapNavn, { x: 3.5, y: 4.78, w: 3, h: 0.3, fontSize: 9, color: C.muted, fontFace: "Calibri", align: "center", margin: 0 });
   }
 
+  // ── SLIDE 1: FORSIDE ─────────────────────────────────────────────────────
   const s1 = pres.addSlide();
   s1.background = { color: C.white };
+  // Venstre navy-søyle
   s1.addShape("rect", { x: 0, y: 0, w: 3.8, h: 5.625, fill: { color: C.navy }, line: { color: C.navy } });
   s1.addShape("rect", { x: 3.55, y: 0, w: 0.25, h: 5.625, fill: { color: C.gold }, line: { color: C.gold } });
-  // Hvit bakgrunnsboks bak logoen for kontrast mot navy sidebar
-  s1.addShape("rect", {
-    x: 0.15, y: 0.18, w: 2.4, h: 0.82,
-    fill: { color: C.white },
-    line: { color: C.white },
-    rectRadius: 0.05,
-    shadow: { type: "outer", blur: 6, offset: 2, angle: 135, color: "000000", opacity: 0.2 }
-  });
-  s1.addImage({ data: logoMovedData, x: 0.25, y: 0.28, w: 2.2, h: 0.62, altText: "MOVED" });
+  // Kapittelinfo i sidebar
   s1.addShape("rect", { x: 0.3, y: 1.05, w: 3.0, h: 0.035, fill: { color: C.goldLight }, line: { color: C.goldLight } });
   s1.addText(kapNavn.toUpperCase(), { x: 0.3, y: 1.2, w: 3.1, h: 0.35, fontSize: 8, color: C.goldLight, fontFace: "Calibri", bold: true, charSpacing: 2, margin: 0 });
   s1.addImage({ data: fjordData, x: 0, y: 4.3, w: 3.8, h: 0.62, altText: "Molde fjord" });
+  // Tittel-seksjon
   s1.addText(tittel || kap.tittel, { x: 4.1, y: 1.0, w: 5.6, h: 2.2, fontSize: 34, color: C.navy, fontFace: "Trebuchet MS", bold: true, align: "left", valign: "middle", margin: 0 });
   s1.addShape("rect", { x: 4.1, y: 3.3, w: 2.4, h: 0.07, fill: { color: C.gold }, line: { color: C.gold } });
-  s1.addText(`CEFR ${kap.id <= 6 ? "A1" : kap.id <= 10 ? "A1–A2" : "A2"}  ·  ${kap.funksjoner[0]}`, { x: 4.1, y: 3.5, w: 5.5, h: 0.5, fontSize: 13, color: C.muted, fontFace: "Calibri", italic: true, align: "left", margin: 0 });
-  s1.addImage({ data: logoKommuneData, x: 7.8, y: 5.1, w: 1.9, h: 0.62, altText: "Molde Kommune" });
+  s1.addText(`CEFR A1  ·  ${kap.funksjoner[0]}`, { x: 4.1, y: 3.5, w: 5.5, h: 0.5, fontSize: 13, color: C.muted, fontFace: "Calibri", italic: true, align: "left", margin: 0 });
+  // Molde Kommune-logo nede til høyre
+  s1.addImage({ data: logoKommuneData, x: 7.8, y: 5.1, w: 1.9, h: 0.45, altText: "Molde Kommune" });
+  // MOVED-logo øverst til høyre – hvit bakgrunn
+  addLogo(s1);
 
+  // ── SLIDE 2: LÆRINGSMÅL ──────────────────────────────────────────────────
   const s2 = pres.addSlide();
   s2.background = { color: C.white };
   s2.addShape("rect", { x: 0, y: 0, w: 10, h: 1.05, fill: { color: C.navy }, line: { color: C.navy } });
   s2.addShape("rect", { x: 0, y: 0, w: 0.22, h: 1.05, fill: { color: C.gold }, line: { color: C.gold } });
   s2.addText("🎯 Læringsmål", { x: 0.45, y: 0.05, w: 7.5, h: 0.95, fontSize: 22, color: C.white, fontFace: "Trebuchet MS", bold: true, align: "left", valign: "middle", margin: 0 });
-  s2.addImage({ data: logoMovedData, x: 8.2, y: 0.25, w: 1.55, h: 0.44, altText: "MOVED" });
   const mal = ["Jeg kan hilse og presentere meg på norsk.", "Jeg kan si hvor jeg kommer fra og hvor jeg bor.", "Jeg kjenner til V2-regelen.", "Jeg kan spørre: Hva heter du? Hvor kommer du fra?"];
   const malItems = mal.map(m => ({ text: m, options: { bullet: { color: C.gold }, breakLine: true, color: C.text, fontSize: 16, fontFace: "Calibri", paraSpaceAfter: 10 } }));
   s2.addText(malItems, { x: 0.8, y: 1.3, w: 8.5, h: 3.2, valign: "top", margin: 8 });
+  addLogo(s2);
   addFooter(s2);
 
+  // ── SLIDE 3: INNHOLD ─────────────────────────────────────────────────────
   const s3 = pres.addSlide();
   s3.background = { color: C.white };
   s3.addShape("rect", { x: 0, y: 0, w: 10, h: 1.05, fill: { color: C.navy }, line: { color: C.navy } });
   s3.addShape("rect", { x: 0, y: 0, w: 0.22, h: 1.05, fill: { color: C.gold }, line: { color: C.gold } });
   s3.addText("📖 " + kap.tittel, { x: 0.45, y: 0.05, w: 7.5, h: 0.95, fontSize: 20, color: C.white, fontFace: "Trebuchet MS", bold: true, align: "left", valign: "middle", margin: 0 });
-  s3.addImage({ data: logoMovedData, x: 8.2, y: 0.25, w: 1.55, h: 0.44, altText: "MOVED" });
   if (innhold) {
     const linjer = innhold.split("\n").filter(l => l.trim()).slice(0, 6);
     const items = linjer.map(l => ({ text: l, options: { bullet: { color: C.gold }, breakLine: true, color: C.text, fontSize: 14, fontFace: "Calibri", paraSpaceAfter: 6 } }));
     s3.addText(items, { x: 0.5, y: 1.2, w: 9, h: 3.3, valign: "top", margin: 8 });
   }
+  addLogo(s3);
   addFooter(s3);
 
+  // ── SLIDE 4: GRAMMATIKK ──────────────────────────────────────────────────
   if (kap.grammatikk.length > 0) {
     const s4 = pres.addSlide();
     s4.background = { color: C.white };
@@ -732,19 +744,22 @@ async function genererPPTX({ kap, tittel, innhold, grammatikk, oppgaver }) {
     s4.addShape("rect", { x: 0, y: 0, w: 0.22, h: 1.05, fill: { color: C.gold }, line: { color: C.gold } });
     s4.addText("📚 Grammatikk", { x: 0.45, y: 0.05, w: 3.0, h: 0.95, fontSize: 12, color: C.goldLight, fontFace: "Calibri", bold: true, align: "left", valign: "middle", charSpacing: 1, margin: 0 });
     s4.addText(kap.grammatikk[0] || "Grammatikk", { x: 3.3, y: 0.05, w: 5.0, h: 0.95, fontSize: 18, color: C.white, fontFace: "Trebuchet MS", bold: true, align: "center", valign: "middle", margin: 0 });
-    s4.addImage({ data: logoMovedData, x: 8.2, y: 0.25, w: 1.55, h: 0.44, altText: "MOVED" });
+    // Regel-kort
     s4.addShape("rect", { x: 0.3, y: 1.25, w: 4.5, h: 2.8, fill: { color: C.white }, line: { color: C.light, pt: 1.5 }, shadow: { type: "outer", blur: 8, offset: 3, angle: 135, color: "000000", opacity: 0.12 } });
     s4.addShape("rect", { x: 0.3, y: 1.25, w: 0.18, h: 2.8, fill: { color: C.navy }, line: { color: C.navy } });
     s4.addText("Regel", { x: 0.6, y: 1.35, w: 4.0, h: 0.4, fontSize: 13, color: C.navy, fontFace: "Trebuchet MS", bold: true, margin: 0 });
     s4.addText(grammatikk || `${kap.grammatikk[0]}:\n\nI norske setninger er verbet alltid på andre plass.\nDette kalles V2-regelen.`, { x: 0.6, y: 1.8, w: 3.95, h: 2.1, fontSize: 13, color: C.text, fontFace: "Calibri", valign: "top", margin: 4, wrap: true });
+    // Eksempel-kort
     s4.addShape("rect", { x: 5.2, y: 1.25, w: 4.5, h: 2.8, fill: { color: C.navy }, line: { color: C.navy }, shadow: { type: "outer", blur: 8, offset: 3, angle: 135, color: "000000", opacity: 0.12 } });
     s4.addShape("rect", { x: 5.2, y: 1.25, w: 0.18, h: 2.8, fill: { color: C.gold }, line: { color: C.gold } });
     s4.addText("Eksempler", { x: 5.5, y: 1.35, w: 3.9, h: 0.4, fontSize: 13, color: C.goldLight, fontFace: "Trebuchet MS", bold: true, margin: 0 });
     const exListe = kap.ordliste.slice(0, 4).map(o => ({ text: `Jeg ${o}... `, options: { bullet: { color: C.gold }, breakLine: true, color: C.white, fontSize: 13, fontFace: "Calibri", paraSpaceAfter: 8 } }));
     s4.addText(exListe, { x: 5.5, y: 1.8, w: 3.9, h: 2.1, valign: "top", margin: 4 });
+    addLogo(s4);
     addFooter(s4);
   }
 
+  // ── SLIDE 5: OPPGAVER ────────────────────────────────────────────────────
   const s5 = pres.addSlide();
   s5.background = { color: C.offwhite };
   s5.addShape("rect", { x: 0, y: 0, w: 10, h: 1.05, fill: { color: C.navy }, line: { color: C.navy } });
@@ -771,10 +786,12 @@ async function genererPPTX({ kap, tittel, innhold, grammatikk, oppgaver }) {
     s5.addText(letter, { x, y, w: 0.42, h: rowH, fontSize: 16, color: C.white, fontFace: "Trebuchet MS", bold: true, align: "center", valign: "middle", margin: 0 });
     s5.addText(opp, { x: x + 0.52, y: y + 0.08, w: colW - 0.62, h: rowH - 0.16, fontSize: 12, color: C.text, fontFace: "Calibri", valign: "middle", margin: 4, wrap: true });
   });
+  addLogo(s5);
   addFooter(s5);
 
   return await pres.write({ outputType: "nodebuffer" });
 }
+
 
 // ── START ────────────────────────────────────────────
 app.listen(PORT, () => {
