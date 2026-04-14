@@ -338,7 +338,7 @@ body{
   <section class="panel-gen">
     <div class="panel-head">
       <h2>✨ Steg 1 – Generer undervisningsinnhold</h2>
-      <p>Velg type og klikk Generer. Interaktive oppgaver låses opp automatisk.</p>
+      <p id="gen-beskrivelse">Velg type og klikk Generer. Interaktive oppgaver låses opp automatisk.</p>
     </div>
 
     <div class="type-grid">
@@ -353,7 +353,7 @@ body{
       <div class="form-row">
         <div class="form-group">
           <label for="velg-leksjon">Leksjon</label>
-          <select id="velg-leksjon"><option value="">Hele kapittelet</option></select>
+          <select id="velg-leksjon" onchange="oppdaterGenBeskrivelse()"><option value="">Hele kapittelet</option></select>
         </div>
         <div class="form-group">
           <label for="velg-yrke">Yrke (valgfri)</label>
@@ -431,10 +431,10 @@ body{
     <div class="oppg-locked" id="oppg-locked">
       <div class="lock-big">🔒</div>
       <h3>Steg 2 – Interaktive oppgaver</h3>
-      <p>Oppgavene genereres automatisk fra leseteksten og låses opp når du klikker «Generer».</p>
+      <p id="locked-beskrivelse">Oppgavene genereres automatisk fra leseteksten og låses opp når du klikker «Generer».</p>
       <div class="steg">
-        <div class="steg-item"><div class="steg-num">1</div>Velg type og klikk «Generer tekst + oppgaver»</div>
-        <div class="steg-item"><div class="steg-num">2</div>AI lager lesetekst og alle oppgavetyper</div>
+        <div class="steg-item"><div class="steg-num">1</div>Velg leksjon eller «Hele kapittelet»</div>
+        <div class="steg-item"><div class="steg-num">2</div>AI lager tekst + alle oppgavetyper</div>
         <div class="steg-item"><div class="steg-num">3</div>Oppgavene åpnes automatisk her</div>
       </div>
     </div>
@@ -622,6 +622,18 @@ function velgLeks(id,el) {
   document.getElementById('velg-leksjon').value=id;
   document.querySelectorAll('.leks-item').forEach(e=>e.classList.remove('active'));
   el.classList.add('active');
+  oppdaterGenBeskrivelse();
+}
+function oppdaterGenBeskrivelse() {
+  const leksjon = document.getElementById('velg-leksjon').value;
+  const el = document.getElementById('gen-beskrivelse');
+  if (!leksjon) {
+    el.innerHTML = '<strong>Hele kapittelet</strong> – lager lengre tekst (120–150 ord) som dekker alle leksjonstemaene, med flere oppgaver.';
+    el.style.color = 'var(--gold)';
+  } else {
+    el.textContent = 'Velg type og klikk Generer. Interaktive oppgaver låses opp automatisk.';
+    el.style.color = '';
+  }
 }
 function velgType(btn) {
   document.querySelectorAll('.type-btn').forEach(b=>b.classList.remove('valgt'));
@@ -738,6 +750,15 @@ function aktiverOppgaver(data) {
   document.getElementById('tekst-body').textContent = data.lesetekst;
   document.getElementById('tekst-badge').textContent = '✓ KLAR';
   document.getElementById('tekst-badge').style.background = 'var(--success)';
+  // Oppdater label basert på om det er hele kapittelet eller en enkeltleksjon
+  const leksjonVal = document.getElementById('velg-leksjon').value;
+  const tekstLabel = document.querySelector('.th-label');
+  if (!leksjonVal) {
+    tekstLabel.textContent = '📖 Lesetekst – hele kapittelet (dekker alle leksjoner)';
+  } else {
+    const leksjonTittel = document.getElementById('velg-leksjon').options[document.getElementById('velg-leksjon').selectedIndex].text;
+    tekstLabel.textContent = `📖 Lesetekst – ${leksjonTittel}`;
+  }
   // Åpne tekst-boksen automatisk
   if (!tekstApen) toggleTekst();
 
@@ -857,8 +878,9 @@ function nesteMC() {
     document.getElementById('mc-prog-txt').textContent = mcData.length+'/'+mcData.length;
     const sc = document.getElementById('mc-score'); sc.classList.add('show');
     document.getElementById('mc-snum').textContent = mcScore+'/'+mcData.length;
-    const e = mcScore===mcData.length?'🏆':mcScore>=3?'🎉':'💪';
-    document.getElementById('mc-slbl').textContent = e+' '+(mcScore===mcData.length?'Perfekt!':mcScore>=3?'Bra jobbet!':'Øv mer!');
+    const halvveis = Math.floor(mcData.length * 0.6);
+    const e = mcScore===mcData.length?'🏆':mcScore>=halvveis?'🎉':'💪';
+    document.getElementById('mc-slbl').textContent = e+' '+(mcScore===mcData.length?'Perfekt!':mcScore>=halvveis?'Bra jobbet!':'Øv mer!');
   } else renderMC();
 }
 function resetMC() { mcIdx=0; mcScore=0; document.getElementById('mc-score').classList.remove('show'); renderMC(); }
