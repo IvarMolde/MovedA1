@@ -684,6 +684,14 @@ async function genererPPTX({ kap, tittel, innhold, grammatikk, oppgaver }) {
   s1.background = { color: C.white };
   s1.addShape("rect", { x: 0, y: 0, w: 3.8, h: 5.625, fill: { color: C.navy }, line: { color: C.navy } });
   s1.addShape("rect", { x: 3.55, y: 0, w: 0.25, h: 5.625, fill: { color: C.gold }, line: { color: C.gold } });
+  // Hvit bakgrunnsboks bak logoen for kontrast mot navy sidebar
+  s1.addShape("rect", {
+    x: 0.15, y: 0.18, w: 2.4, h: 0.82,
+    fill: { color: C.white },
+    line: { color: C.white },
+    rectRadius: 0.05,
+    shadow: { type: "outer", blur: 6, offset: 2, angle: 135, color: "000000", opacity: 0.2 }
+  });
   s1.addImage({ data: logoMovedData, x: 0.25, y: 0.28, w: 2.2, h: 0.62, altText: "MOVED" });
   s1.addShape("rect", { x: 0.3, y: 1.05, w: 3.0, h: 0.035, fill: { color: C.goldLight }, line: { color: C.goldLight } });
   s1.addText(kapNavn.toUpperCase(), { x: 0.3, y: 1.2, w: 3.1, h: 0.35, fontSize: 8, color: C.goldLight, fontFace: "Calibri", bold: true, charSpacing: 2, margin: 0 });
