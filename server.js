@@ -165,19 +165,47 @@ app.post("/api/generer-komplett", requireAuth, async (req, res) => {
     const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
+    const erHeleKapittelet = !leksjon;
     const leksjonTekst = leksjon
       ? `Leksjon ${leksjon}: ${kap.leksjoner.find(l => l.id === leksjon)?.tittel || leksjon}`
-      : `Hele kapittelet: ${kap.tittel}`;
+      : `Alle leksjoner: ${kap.leksjoner.filter(l => !l.id.toString().endsWith('.5')).map(l => l.tittel).join(" · ")}`;
     const yrkeTekst = yrke ? `\nElevenes yrkesbakgrunn: ${yrke}` : "";
 
+    const lesetekstInstruksjon = erHeleKapittelet
+      ? `DEL 1 – LESETEKST (120–150 ord, dekker hele kapittelet):
+Lag en sammenhengende tekst om en voksen person som bruker ALLE kommunikative mål fra kapittelet.
+Teksten skal naturlig veve inn alle leksjonstemaene: ${kap.leksjoner.filter(l => !l.id.toString().endsWith('.5')).map(l => l.tittel).join(", ")}.
+Bruk enkle setninger (maks 8 ord). Teksten er grunnlaget for alle oppgavene i del 2.`
+      : `DEL 1 – LESETEKST (60–80 ord):
+En kort tekst om en voksen person i en situasjon knyttet til ${kap.leksjoner.find(l => l.id === leksjon)?.tittel || "kapittelet"}.
+${type === "yrkestekst" ? "Teksten skal handle om en person i jobben sin." : ""}
+Bruk enkle setninger (maks 7 ord). Teksten er grunnlaget for alle oppgavene i del 2.`;
+
+    const oppgaveAntall = erHeleKapittelet
+      ? `- mc: 8 spørsmål (dekk alle leksjonstemaene)
+- fyll_inn: 7 setninger
+- sant_usant: 8 påstander
+- ordstilling: 6 setninger
+- koble_par: 8 par
+- diktat: 5 setninger
+- laringsmaal: 5 punkter (ett per leksjon)`
+      : `- mc: 5 spørsmål
+- fyll_inn: 5 setninger
+- sant_usant: 6 påstander
+- ordstilling: 4 setninger
+- koble_par: 6 par
+- diktat: 4 setninger
+- laringsmaal: 3 punkter`;
+
     const prompt = `Du er en erfaren norsklærer ved Molde voksenopplæringssenter (MOVED).
-Du lager undervisningsmateriell for CEFR-nivå ${nivaa} for voksne innvandrere (25–55 år).
+Du lager undervisningsmateriell for CEFR-nivå A1 for voksne innvandrere (25–55 år).
 
 VIKTIGE REGLER:
 - Kun bokmål. Ingen morsmålsstøtte.
 - Aldersadekvat – IKKE barnetema. Voksne i realistiske situasjoner.
-- Enkelt språk: A1 = maks 7 ord per setning.
+- Enkelt språk: A1 = maks 7–8 ord per setning.
 - Bruk ord fra kapittelets nøkkelord der det passer naturlig.
+${erHeleKapittelet ? "- HELE KAPITTELET: alle leksjonstemaer skal dekkes i tekst og oppgaver." : ""}
 
 KAPITTELKONTEKST:
 Kapittel ${kap.id}: ${kap.tittel}
@@ -188,72 +216,46 @@ Nøkkelord: ${kap.ordliste.join(", ")}${yrkeTekst}
 
 OPPGAVE: Lag en komplett leksjon som inneholder BEGGE deler:
 
-DEL 1 – LESETEKST (60–80 ord):
-En kort tekst om en voksen person i en situasjon knyttet til kapittelet.
-Hvis type er "yrkestekst": teksten skal handle om en person i jobben sin.
-Bruk enkle setninger. Teksten er grunnlaget for alle oppgavene i del 2.
+${lesetekstInstruksjon}
 
 DEL 2 – INTERAKTIVE OPPGAVER basert på teksten over:
-Lag NØYAKTIG dette JSON-objektet (ingen tekst utenfor JSON):
+Antall oppgaver per type:
+${oppgaveAntall}
+
+Lag NØYAKTIG dette JSON-objektet (ingen tekst utenfor JSON).
+Skaler antall elementer i hvert array etter tallene over:
 
 {
   "lesetekst": "Hele leseteksten her som én streng",
   "mc": [
-    {"spm": "Spørsmål basert på teksten?", "alternativer": ["Svar A", "Svar B", "Svar C", "Svar D"], "riktig": 0},
-    {"spm": "...", "alternativer": ["...", "...", "...", "..."], "riktig": 1},
-    {"spm": "...", "alternativer": ["...", "...", "...", "..."], "riktig": 2},
-    {"spm": "...", "alternativer": ["...", "...", "...", "..."], "riktig": 0},
-    {"spm": "...", "alternativer": ["...", "...", "...", "..."], "riktig": 1}
+    {"spm": "Spørsmål basert direkte på teksten?", "alternativer": ["Riktig svar", "Feil svar B", "Feil svar C", "Feil svar D"], "riktig": 0}
   ],
   "fyll_inn": [
-    {"for": "tekst før tomrom", "etter": "tekst etter tomrom", "svar": "riktig ord", "hint": "(ordklasse)"},
-    {"for": "...", "etter": "...", "svar": "...", "hint": "..."},
-    {"for": "...", "etter": "...", "svar": "...", "hint": "..."},
-    {"for": "...", "etter": "...", "svar": "...", "hint": "..."},
-    {"for": "...", "etter": "...", "svar": "...", "hint": "..."}
+    {"for": "tekst før tomrommet", "etter": "tekst etter tomrommet.", "svar": "riktig ord fra teksten", "hint": "(ordklasse)"}
   ],
   "sant_usant": [
-    {"pastand": "Påstand basert på teksten.", "riktig": true},
-    {"pastand": "...", "riktig": false},
-    {"pastand": "...", "riktig": true},
-    {"pastand": "...", "riktig": false},
-    {"pastand": "...", "riktig": true},
-    {"pastand": "...", "riktig": false}
+    {"pastand": "Påstand om noe i teksten.", "riktig": true}
   ],
   "ordstilling": [
-    {"ord": ["Verb", "Subjekt", "objekt", "adverb"], "riktig": "Subjekt Verb objekt adverb"},
-    {"ord": ["...", "...", "...", "..."], "riktig": "..."},
-    {"ord": ["...", "...", "...", "..."], "riktig": "..."},
-    {"ord": ["...", "...", "..."], "riktig": "..."}
+    {"ord": ["ord1", "ord2", "ord3", "ord4"], "riktig": "ord2 ord1 ord3 ord4"}
   ],
   "koble_par": [
-    {"nor": "norsk ord/uttrykk fra teksten", "forklaring": "enkel norsk forklaring"},
-    {"nor": "...", "forklaring": "..."},
-    {"nor": "...", "forklaring": "..."},
-    {"nor": "...", "forklaring": "..."},
-    {"nor": "...", "forklaring": "..."},
-    {"nor": "...", "forklaring": "..."}
+    {"nor": "ord eller uttrykk fra teksten", "forklaring": "enkel norsk forklaring av ordet"}
   ],
   "diktat": [
-    "Setning 1 fra teksten.",
-    "Setning 2 fra teksten.",
-    "Setning 3 fra teksten.",
-    "Setning 4 fra teksten."
+    "Komplett setning fra teksten."
   ],
   "laringsmaal": [
-    "Jeg kan [konkret kommunikativt mål fra kapittelet].",
-    "Jeg kan [konkret grammatisk mål fra kapittelet].",
-    "Jeg kan [konkret praktisk mål fra kapittelet]."
+    "Jeg kan [konkret mål]."
   ],
   "fasit": {
-    "fyll_inn": ["svar1", "svar2", "svar3", "svar4", "svar5"],
-    "sant_usant": [true, false, true, false, true, false],
-    "ordstilling": ["Riktig setning 1", "Riktig setning 2", "Riktig setning 3", "Riktig setning 4"],
-    "mc_forklaring": ["Kort forklaring til svar 1", "Kort forklaring til svar 2", "Kort forklaring til svar 3", "Kort forklaring til svar 4", "Kort forklaring til svar 5"]
+    "fyll_inn": ["svar1"],
+    "sant_usant": [true],
+    "ordstilling": ["Riktig setning"],
+    "mc_forklaring": ["Forklaring"]
   },
   "bilde_forslag": [
-    "[BILDE: beskrivelse av relevant bilde for leseteksten]",
-    "[BILDE: beskrivelse av relevant bilde for ordlisten]"
+    "[BILDE: beskrivelse av relevant bilde for teksten]"
   ]
 }
 
